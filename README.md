@@ -166,6 +166,13 @@ defensive, local.
 
 `paranoid` is v0.1 and actively developed — issues and PRs welcome.
 
+## Contributing
+
+New vulnerability classes, framework guides, and independent-app proofs are the
+most useful contributions — see [CONTRIBUTING.md](CONTRIBUTING.md) for the format
+and the honesty rules, and [SECURITY.md](SECURITY.md) for scope. Good first issues
+are labeled in the tracker.
+
 ## License
 
 MIT © 2026 kulchankas. See [LICENSE](LICENSE).
