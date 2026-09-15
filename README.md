@@ -11,6 +11,10 @@ with a real request, patches them, and re-verifies the fix.**
 find  →  prove  →  patch  →  re-verify
 ```
 
+<p align="center">
+  <img src="assets/hack-me-demo.svg" alt="hack-me finds, proves, patches and re-verifies four real vulnerabilities in a running app" width="760">
+</p>
+
 ---
 
 ## Why this isn't another "write secure code" skill
