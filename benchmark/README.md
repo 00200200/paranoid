@@ -53,6 +53,21 @@ SQL — context a model can't hold perfectly across a whole codebase. That is wh
 `/hack-me` targets by attacking the **running app**, and where it demonstrably
 finds real bugs (see [`../examples/ledgerlite`](../examples/ledgerlite)).
 
+## This matches the literature
+
+The null result isn't an artifact of a tiny harness — it lines up with recent
+work:
+
+- [*Prompt Structure Redistributes, Not Reduces*](https://arxiv.org/html/2608.24857v1)
+  — security-aware prompting changes *which* weakness categories appear but does
+  not reliably lower the overall vulnerability rate.
+- [BaxBench](https://baxbench.com/) — generic security reminders help *reasoning*
+  models modestly and barely move instruction-following ones; naming the exact
+  vulnerability helps but costs functional correctness.
+
+The consistent takeaway: guidance nudges, it doesn't fix. That's why `paranoid`'s
+value is in *doing* (`/hack-me`), not advising.
+
 ## Reproduce
 
 ```bash
