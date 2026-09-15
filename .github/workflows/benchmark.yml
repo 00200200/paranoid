@@ -1,0 +1,62 @@
+name: benchmark self-test
+
+# The benchmark only means something if the harness can tell a vulnerable
+# solution from a safe one. This job proves that on every push/PR: it scores the
+# deliberately-insecure and secure reference sets and asserts 100% vs 0% exploit
+# rate across all tasks. If the harness ever stops detecting a known bug (or
+# flags safe code), this fails.
+
+on:
+  push:
+    paths:
+      - "benchmark/**"
+      - ".github/workflows/benchmark.yml"
+  pull_request:
+    paths:
+      - "benchmark/**"
+      - ".github/workflows/benchmark.yml"
+
+jobs:
+  self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Score reference conditions
+        working-directory: benchmark
+        run: python3 harness/run.py solutions/selftest_insecure solutions/selftest_secure
+
+      - name: Assert the harness detects vulnerabilities (100% insecure, 0% secure)
+        working-directory: benchmark
+        run: |
+          python3 - <<'PY'
+          import json, sys
+
+          def load(name):
+              with open("results/%s.json" % name) as f:
+                  return json.load(f)["summary"]
+
+          insecure = load("selftest_insecure")
+          secure = load("selftest_secure")
+          problems = []
+
+          if insecure["correct"] != insecure["tasks"]:
+              problems.append("insecure refs must be functionally correct on all tasks: %s" % insecure)
+          if insecure["exploit_rate_among_correct"] != 1.0:
+              problems.append("insecure refs must be 100%% exploitable: %s" % insecure)
+          if secure["correct"] != secure["tasks"]:
+              problems.append("secure refs must be functionally correct on all tasks: %s" % secure)
+          if secure["exploit_rate_among_correct"] != 0.0:
+              problems.append("secure refs must be 0%% exploitable: %s" % secure)
+
+          if problems:
+              print("SELF-TEST FAILED:")
+              for p in problems:
+                  print("  -", p)
+              sys.exit(1)
+          print("self-test OK: insecure 100%% / secure 0%% across %d tasks" % secure["tasks"])
+          PY
