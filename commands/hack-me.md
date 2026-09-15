@@ -35,9 +35,12 @@ Say the scope back to the user and get a "go" before the first request.
    and, if needed, two test accounts (attacker + victim) — never real credentials
    beyond a local dev login.
 
-2. **Prioritize.** From `references/vibe-top-10.md`, pick the classes this app is
-   actually exposed to. Order by likelihood × impact. Broken access control and
-   missing auth first; they're the most common and the easiest to prove.
+2. **Prioritize.** From the companion `paranoid` skill's
+   [`references/vibe-top-10.md`](../skills/paranoid/references/vibe-top-10.md)
+   (installed alongside this command; if you only have `/hack-me`, use the
+   class list in the report below), pick the classes this app is actually exposed
+   to. Order by likelihood × impact. Broken access control and missing auth
+   first; they're the most common and the easiest to prove.
 
 3. **Probe, one class at a time.** For each candidate, craft the minimal request
    that would succeed only if the bug exists. Use `curl`/HTTP against localhost.
