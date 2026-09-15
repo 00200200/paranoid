@@ -86,6 +86,10 @@ found, proved, patched and re-verified **six** real bugs, including SQL-injectin
 the admin's password out through the API and an unauthenticated endpoint dumping
 every user's plaintext password:
 
+<p align="center">
+  <img src="assets/vampi-receipts.svg" alt="hack-me finds, proves, patches and re-verifies six real vulnerabilities in OWASP VAmPI" width="760">
+</p>
+
 | # | Finding | OWASP API | Status |
 |---|---------|:--:|:--:|
 | 1 | Unauth `/users/v1/_debug` dumps every password | API3/5 | **401/403** |
