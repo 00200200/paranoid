@@ -89,7 +89,8 @@ what you checked:
 If the app is running locally and the user wants proof, use the **hack-me**
 workflow (see [`../../commands/hack-me.md`](../../commands/hack-me.md)): it
 exploits the user's *own* app on localhost, shows the bug is real, patches it,
-and re-runs to confirm the fix.
+and re-runs to confirm the fix. For where routes and auth live per stack
+(Next.js, FastAPI, Express), see [`references/frameworks.md`](references/frameworks.md).
 
 Before committing a feature, run the gate in
 [`checklists/pre-commit.md`](checklists/pre-commit.md). It's seven questions; if

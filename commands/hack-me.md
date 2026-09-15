@@ -33,7 +33,10 @@ Say the scope back to the user and get a "go" before the first request.
 1. **Map.** Find the app's routes/handlers and how it's run (framework, port,
    how to start it, whether seed/test users exist). Ask the user for the base URL
    and, if needed, two test accounts (attacker + victim) — never real credentials
-   beyond a local dev login.
+   beyond a local dev login. If it's Next.js, FastAPI, or Express, the companion
+   `paranoid` skill's
+   [`references/frameworks.md`](../skills/paranoid/references/frameworks.md) says
+   exactly where routes and auth live and what to probe first.
 
 2. **Prioritize.** From the companion `paranoid` skill's
    [`references/vibe-top-10.md`](../skills/paranoid/references/vibe-top-10.md)
