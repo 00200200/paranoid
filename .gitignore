@@ -1,0 +1,25 @@
+# deps / build
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# secrets & local env (this repo teaches this — practice it)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# benchmark run outputs
+benchmark/results/
+benchmark/.cache/
