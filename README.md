@@ -2,6 +2,13 @@
   <img src="assets/banner.svg" alt="paranoid — an agent skill that pentests your own running app: /hack-me finds, proves, patches and re-verifies real vulnerabilities" width="100%">
 </p>
 
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1f6feb" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/runs%20in-Claude%20Code%20·%20Codex%20·%20Cursor-8957e5" alt="Runs in Claude Code, Codex, Cursor">
+  <img src="https://img.shields.io/badge/proofs-localhost%20only-3fb950" alt="Localhost-only proofs">
+  <a href="https://github.com/kulchankas/paranoid/stargazers"><img src="https://img.shields.io/github/stars/kulchankas/paranoid?style=social" alt="GitHub stars"></a>
+</p>
+
 # 🕵️ paranoid
 
 **Your app is guilty until proven secure.** `/hack-me` breaks into your own
@@ -124,6 +131,16 @@ reduce vulnerabilities?"* — plus the negative result above and how to re-run i
 say-so. It is not built to target third-party systems, scan hosts you don't own,
 evade detection, or produce live malware, and it will decline to. Authorized,
 defensive, local.
+
+## Roadmap
+
+- [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
+- [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
+- [ ] Independent-app proof (e.g. OWASP Juice Shop), published as receipts
+- [ ] More benchmark task classes (SSRF, auth flows, leaked secrets)
+- [ ] `/hack-me` framework guides (Next.js, FastAPI, Express)
+
+`paranoid` is v0.1 and actively developed — issues and PRs welcome.
 
 ## License
 
