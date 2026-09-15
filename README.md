@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1f6feb" alt="MIT license"></a>
+  <a href="https://github.com/kulchankas/paranoid/actions/workflows/benchmark.yml"><img src="https://github.com/kulchankas/paranoid/actions/workflows/benchmark.yml/badge.svg" alt="benchmark self-test"></a>
   <img src="https://img.shields.io/badge/runs%20in-Claude%20Code%20·%20Codex%20·%20Cursor-8957e5" alt="Runs in Claude Code, Codex, Cursor">
   <img src="https://img.shields.io/badge/proofs-localhost%20only-3fb950" alt="Localhost-only proofs">
   <a href="https://github.com/kulchankas/paranoid/stargazers"><img src="https://img.shields.io/github/stars/kulchankas/paranoid?style=social" alt="GitHub stars"></a>
@@ -114,7 +115,8 @@ for the vulnerability classes that actually ship in vibe-coded apps:
 - references: [auth & access](skills/paranoid/references/auth-access.md) ·
   [secrets & the client boundary](skills/paranoid/references/secrets-config.md) ·
   [injection & SSRF](skills/paranoid/references/injection.md) ·
-  [APIs & webhooks](skills/paranoid/references/apis-webhooks.md)
+  [APIs & webhooks](skills/paranoid/references/apis-webhooks.md) ·
+  [`/hack-me` framework guides](skills/paranoid/references/frameworks.md)
 - a 7-point [pre-commit gate](skills/paranoid/checklists/pre-commit.md)
 
 Load it while building; run `/hack-me` to check whether it held.
@@ -137,8 +139,8 @@ defensive, local.
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [ ] Independent-app proof (e.g. OWASP Juice Shop), published as receipts
-- [ ] More benchmark task classes (SSRF, auth flows, leaked secrets)
-- [ ] `/hack-me` framework guides (Next.js, FastAPI, Express)
+- [x] More benchmark task classes — SSRF + XSS added (auth flows, leaked secrets next)
+- [x] `/hack-me` framework guides (Next.js, FastAPI, Express)
 
 `paranoid` is v0.1 and actively developed — issues and PRs welcome.
 

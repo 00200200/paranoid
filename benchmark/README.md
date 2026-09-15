@@ -20,7 +20,7 @@ Two numbers per condition:
 
 - **Tasks** (`tasks/`): each has a *neutral* spec (no security hints), a
   **functional** check, and an **exploit** check for a specific class (IDOR,
-  missing authz, SQLi, mass assignment, path traversal).
+  missing authz, SQLi, mass assignment, path traversal, SSRF, XSS).
 - **Conditions**: identical base model; `baseline` = no skill, `paranoid` = skill
   in context. The generated solutions live in `solutions/<condition>/`.
 - **Score**: `harness/run.py` runs the functional check, then the exploit check,
@@ -42,7 +42,19 @@ unprompted.** The skill has no headroom to add value at this granularity.
 This is not a broken harness. Against deliberately-insecure vs secure reference
 solutions (`solutions/selftest_insecure`, `solutions/selftest_secure`) it reports
 **100%** and **0%** exploit rates respectively — it detects the difference when
-there is one.
+there is one. This self-test runs in [CI](../.github/workflows/benchmark.yml) on
+every push, so a regression that makes the harness miss a known bug fails the
+build.
+
+## Task classes
+
+Eight classes have a neutral spec + functional + exploit check today: `idor_invoices`,
+`idor_session_only`, `missing_auth_admin`, `sqli_login`, `mass_assignment_update`,
+`path_traversal_note`, `ssrf_url_preview`, `xss_comment_render`. All eight are
+covered by the insecure/secure self-test above (100% / 0%). The matched-model
+numbers reported here predate the SSRF and XSS additions; those two are
+harness-verified and awaiting a model-condition run (honesty rule: no
+model number appears until the harness produced it).
 
 ## What it means
 
