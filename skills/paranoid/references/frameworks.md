@@ -5,6 +5,8 @@ what to probe first. Use this in the **Map** and **Prioritize** steps of
 [`/hack-me`](../../../commands/hack-me.md). The proof recipes are the same across
 frameworks — these guides just tell you where to look and how to talk to the app.
 
+Covered here: **Next.js, FastAPI, Express, Django, Ruby on Rails, Go.**
+
 For every stack the priority order is the same: **broken access control / IDOR →
 missing auth → injection → mass assignment → SSRF → info leaks.** Below is where
 each tends to hide per framework.
@@ -101,6 +103,83 @@ each tends to hide per framework.
   credentials: true })` → info leak / permissive CORS.
 
 ---
+
+## Django (Python)
+
+**Where routes live**
+- `urls.py` (`urlpatterns`) maps paths to views in `views.py` or DRF
+  `ViewSet`s/`APIView`s under an app dir. `django-admin` mounts `/admin/`.
+
+**Where auth should be**
+- `@login_required` / `LoginRequiredMixin` for authentication; **object**
+  permissions are the gap — a `get_object_or_404(Model, pk=...)` with no owner
+  filter is IDOR. Scope querysets: `Model.objects.filter(owner=request.user)`.
+- DRF: `permission_classes` on the view, plus `get_queryset()` scoped to
+  `self.request.user`. `AllowAny` is an explicit decision, not a default.
+
+**Run it**
+- `python manage.py runserver` (default `http://127.0.0.1:8000`).
+
+**Probe first**
+- Detail/edit/delete views taking a `pk`/`slug`, requested as another user → IDOR.
+- `ModelForm`/serializer with `fields = '__all__'` → mass assignment (can set
+  `is_staff`/`is_superuser`/FK owner). Serializers should list fields explicitly
+  and mark server-owned ones `read_only`.
+- `.raw()` / `.extra()` / `cursor.execute(f"...")` → SQLi.
+- `mark_safe(...)` / `|safe` / `format_html` with user data → XSS.
+- `DEBUG = True` reachable → stack traces + settings leak.
+
+## Ruby on Rails
+
+**Where routes live**
+- `config/routes.rb` (`resources :things`) → `app/controllers/*_controller.rb`
+  actions. `rails routes` prints the full map.
+
+**Where auth should be**
+- A `before_action :authenticate_user!` (Devise) for authn; authorization is the
+  classic Rails gap — scope through the association:
+  `current_user.things.find(params[:id])`, not `Thing.find(params[:id])`.
+- Strong parameters are the mass-assignment guard:
+  `params.require(:thing).permit(:title, :body)` — never `permit!`.
+
+**Run it**
+- `bin/rails server` (default `http://localhost:3000`).
+
+**Probe first**
+- `Model.find(params[:id])` without `current_user` scope → IDOR.
+- `permit!` or a permit list that includes `role`/`admin`/`user_id` → mass
+  assignment / privilege escalation.
+- `where("name = '#{params[:q]}'")` / string-interpolated SQL → SQLi.
+- `html_safe` / `raw()` on user input → XSS.
+- Missing `authenticate_user!` on an admin/namespaced controller → missing auth.
+
+## Go (net/http, chi, gin, echo)
+
+**Where routes live**
+- `http.HandleFunc` / `mux.HandleFunc`, or a router (`chi`, `gin`, `echo`)
+  registering handlers, usually in `main.go` or a `handlers/` package.
+
+**Where auth should be**
+- Middleware wrapping the mux/router that populates a user into the request
+  `context.Context`; handlers read `r.Context()`. A handler registered outside
+  the authed middleware chain is public.
+- Ownership: put the user id in the query
+  (`WHERE id = $1 AND owner_id = $2`), not an `if` after the row loads.
+
+**Run it**
+- `go run .` / `go run ./cmd/server`. Port is usually a flag or
+  `os.Getenv("PORT")` — read the startup log.
+
+**Probe first**
+- Handlers reading `chi.URLParam(r,"id")` / `r.PathValue("id")` with no owner
+  check → IDOR; call them unauthenticated → missing auth.
+- `db.Query(fmt.Sprintf("... %s", x))` → SQLi (use `db.Query("... $1", x)` /
+  placeholders).
+- `exec.Command("sh","-c", userStr)` → command injection (pass args, not a shell
+  string).
+- `text/template` (instead of `html/template`) rendering to HTML → XSS.
+- `json.Unmarshal` into a struct with server-owned fields that the client can set
+  → mass assignment.
 
 ## Any stack — the constants
 
