@@ -128,11 +128,23 @@ def print_compare(summaries):
 
 
 def main(argv):
-    dirs = argv[1:]
+    args = argv[1:]
+    only = None
+    if args and args[0].startswith("--only"):
+        if "=" in args[0]:
+            only, args = args[0].split("=", 1)[1], args[1:]
+        elif len(args) >= 2:
+            only, args = args[1], args[2:]
+        else:
+            args = args[1:]
+        only = {x for x in (only or "").split(",") if x}
+    dirs = args
     if not dirs:
         print(__doc__)
         return 2
     tasks = discover_tasks()
+    if only:
+        tasks = [(n, c) for (n, c) in tasks if n in only]
     if not tasks:
         print("no tasks found in %s" % TASKS_DIR)
         return 1
