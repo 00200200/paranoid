@@ -4,8 +4,9 @@
 
 # 🕵️ paranoid
 
-**Point it at your running app. It finds the vulnerabilities, proves each one
-with a real request, patches them, and re-verifies the fix.**
+**Your app is guilty until proven secure.** `/hack-me` breaks into your own
+running app, proves each hole with a real request, patches it, and re-verifies —
+on localhost, with receipts.
 
 `paranoid` is an agent skill for Claude Code, Codex, and Cursor. Its core is
 **`/hack-me`** — an authorized, localhost-only self-pentest loop that attacks

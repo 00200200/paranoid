@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="paranoid mascot: a nervous, wide-eyed terminal that trusts nothing">
+  <defs><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style></defs>
+  <!-- terminal-bot face -->
+  <rect x="24" y="28" width="208" height="200" rx="40" fill="#0d1117" stroke="#30363d" stroke-width="4"/>
+  <!-- worried eyebrows -->
+  <path d="M74 92 l42 14" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
+  <path d="M182 92 l-42 14" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
+  <!-- eyes (whites) -->
+  <ellipse cx="100" cy="142" rx="29" ry="33" fill="#e6edf3"/>
+  <ellipse cx="156" cy="142" rx="29" ry="33" fill="#e6edf3"/>
+  <!-- pupils, glancing to the side (suspicious) -->
+  <circle cx="113" cy="135" r="12" fill="#0d1117"/>
+  <circle cx="169" cy="135" r="12" fill="#0d1117"/>
+  <circle cx="117" cy="131" r="4" fill="#e6edf3"/>
+  <circle cx="173" cy="131" r="4" fill="#e6edf3"/>
+  <!-- nervous sweat drop -->
+  <path d="M200 74 c-9 13 -13 19 -13 25 a13 13 0 0 0 26 0 c0 -6 -4 -12 -13 -25 z" fill="#58a6ff"/>
+  <!-- prompt mouth -->
+  <text x="128" y="206" font-size="30" font-weight="700" text-anchor="middle"><tspan fill="#3fb950">&gt;</tspan><tspan fill="#f85149">_</tspan></text>
+</svg>
