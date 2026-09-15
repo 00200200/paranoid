@@ -21,7 +21,7 @@ Two numbers per condition:
 - **Tasks** (`tasks/`): each has a *neutral* spec (no security hints), a
   **functional** check, and an **exploit** check for a specific class (IDOR,
   missing authz, SQLi, mass assignment, path traversal, SSRF, XSS, command
-  injection, open redirect).
+  injection, open redirect, JWT auth verification, leaked secrets).
 - **Conditions**: identical base model; `baseline` = no skill, `paranoid` = skill
   in context. The generated solutions live in `solutions/<condition>/`.
 - **Score**: `harness/run.py` runs the functional check, then the exploit check,
@@ -49,12 +49,13 @@ build.
 
 ## Task classes
 
-Ten classes have a neutral spec + functional + exploit check today: `idor_invoices`,
+Twelve classes have a neutral spec + functional + exploit check today: `idor_invoices`,
 `idor_session_only`, `missing_auth_admin`, `sqli_login`, `mass_assignment_update`,
 `path_traversal_note`, `ssrf_url_preview`, `xss_comment_render`,
-`command_injection_ping`, `open_redirect_login`. All ten are covered by the
-insecure/secure self-test above (100% / 0%). The matched-model numbers reported
-here predate the SSRF/XSS/command-injection/open-redirect additions; those are
+`command_injection_ping`, `open_redirect_login`, `jwt_verify_identity`,
+`leaked_secrets_client_config`. All twelve are covered by the insecure/secure
+self-test above (100% / 0%). The matched-model numbers reported here predate the
+classes added after SQLi/IDOR/mass-assignment; those newer classes are
 harness-verified and awaiting a model-condition run (honesty rule: no model number
 appears until the harness produced it).
 
