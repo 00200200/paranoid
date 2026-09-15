@@ -9,6 +9,9 @@
     <radialGradient id="glow" cx="24%" cy="34%" r="62%">
       <stop offset="0" stop-color="#1f6feb" stop-opacity="0.20"/><stop offset="1" stop-color="#1f6feb" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="bezel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2bd455"/><stop offset="0.5" stop-color="#2ee6d6"/><stop offset="1" stop-color="#4c8dff"/>
+    </linearGradient>
     <style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
   </defs>
 
@@ -24,23 +27,24 @@
   <text x="70" y="282" font-size="122" font-weight="800" letter-spacing="-3" fill="#e6edf3">paranoid</text>
   <rect x="74" y="304" width="360" height="9" rx="4" fill="url(#rg)"/>
 
-  <!-- taglines (fun up top, honest underneath) -->
+  <!-- taglines -->
   <text x="76" y="376" font-size="36" fill="#c9d1d9">Your app is guilty until proven secure.</text>
   <text x="76" y="418" font-size="27" fill="#8b949e">It breaks in, proves it, and patches the hole — on localhost, with receipts.</text>
 
-  <!-- mascot: a nervous, wide-eyed terminal that trusts nothing -->
+  <!-- mascot: a nervous, wide-eyed terminal that trusts nothing (bright bezel, dark screen) -->
   <g>
-    <rect x="946" y="120" width="236" height="224" rx="44" fill="#0d1117" stroke="#30363d" stroke-width="3"/>
-    <path d="M1006 166 l40 13" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
-    <path d="M1122 166 l-40 13" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
-    <ellipse cx="1034" cy="214" rx="28" ry="32" fill="#e6edf3"/>
-    <ellipse cx="1094" cy="214" rx="28" ry="32" fill="#e6edf3"/>
-    <circle cx="1022" cy="208" r="12" fill="#0d1117"/>
-    <circle cx="1082" cy="208" r="12" fill="#0d1117"/>
-    <circle cx="1018" cy="204" r="4" fill="#e6edf3"/>
-    <circle cx="1078" cy="204" r="4" fill="#e6edf3"/>
-    <path d="M1156 150 c-8 12 -12 18 -12 24 a12 12 0 0 0 24 0 c0 -6 -4 -12 -12 -24 z" fill="#58a6ff"/>
-    <text x="1064" y="300" font-size="30" font-weight="700" text-anchor="middle"><tspan fill="#3fb950">&gt;</tspan><tspan fill="#f85149">_</tspan></text>
+    <rect x="946" y="120" width="236" height="224" rx="46" fill="url(#bezel)"/>
+    <rect x="972" y="150" width="184" height="164" rx="30" fill="#0b0f14"/>
+    <path d="M1000 192 l34 11" stroke="#e6edf3" stroke-width="6" stroke-linecap="round"/>
+    <path d="M1128 192 l-34 11" stroke="#e6edf3" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="1040" cy="230" rx="23" ry="27" fill="#e6edf3"/>
+    <ellipse cx="1088" cy="230" rx="23" ry="27" fill="#e6edf3"/>
+    <circle cx="1030" cy="225" r="10" fill="#0b0f14"/>
+    <circle cx="1078" cy="225" r="10" fill="#0b0f14"/>
+    <circle cx="1027" cy="221" r="3.2" fill="#e6edf3"/>
+    <circle cx="1075" cy="221" r="3.2" fill="#e6edf3"/>
+    <text x="1064" y="300" font-size="26" font-weight="700" text-anchor="middle"><tspan fill="#2bd455">&gt;</tspan><tspan fill="#ff6b6b">_</tspan></text>
+    <path d="M1166 138 c-8 12 -12 18 -12 24 a12 12 0 0 0 24 0 c0 -6 -4 -12 -12 -24 z" fill="#eafcff" stroke="#4c8dff" stroke-width="2"/>
   </g>
 
   <!-- before / after proof strip -->
