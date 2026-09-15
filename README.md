@@ -78,6 +78,28 @@ Reproduce it: `python3 examples/ledgerlite/app.py`, then run `/hack-me`.
 > That target was written as a demo, so it proves the **loop** works end-to-end.
 > Point `/hack-me` at *your* app for your own results.
 
+### Proven on an app we didn't write
+
+The harder claim is code we don't control. Pointed at [OWASP **VAmPI**](https://github.com/erev0s/VAmPI)
+— a well-known third-party vulnerable API — with nothing but its URL, `/hack-me`
+found, proved, patched and re-verified **six** real bugs, including SQL-injecting
+the admin's password out through the API and an unauthenticated endpoint dumping
+every user's plaintext password:
+
+| # | Finding | OWASP API | Status |
+|---|---------|:--:|:--:|
+| 1 | Unauth `/users/v1/_debug` dumps every password | API3/5 | **401/403** |
+| 2 | Read any user's private book secret (BOLA) | API1 | **404** |
+| 3 | Register with `admin:true` → privilege escalation | API6 | **admin=false** |
+| 4 | Change any user's password (account takeover) | API1 | **victim untouched** |
+| 5 | SQLi in user lookup (UNION-dumps passwords) | API8 | **404** |
+| 6 | Debugger + stack traces exposed | API7 | **clean errors** |
+
+Notably, VAmPI's own global "secure mode" flag closed only four of the six — the
+critical password dump stayed open until patched. `/hack-me` caught it by
+replaying every exploit instead of trusting the flag. Full receipts:
+[`examples/vampi/HACKME_REPORT.md`](examples/vampi/HACKME_REPORT.md).
+
 ## What `/hack-me` actually does
 
 1. **Maps** your running app and picks the risk classes it's exposed to.
@@ -138,7 +160,7 @@ defensive, local.
 
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
-- [ ] Independent-app proof (e.g. OWASP Juice Shop), published as receipts
+- [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
 - [x] More benchmark task classes — SSRF + XSS added (auth flows, leaked secrets next)
 - [x] `/hack-me` framework guides (Next.js, FastAPI, Express)
 
