@@ -1,51 +1,84 @@
-# Benchmark
+# Benchmark: does a security *skill* actually reduce vulnerabilities?
 
-The point of this folder: an honest, reproducible answer to "does the skill
-actually reduce vulnerabilities?" — not a marketing number.
+This is the honest test that shaped `paranoid`. It answers one question with a
+reproducible harness instead of a claim — and the answer is *why* `paranoid` is a
+doing-tool (`/hack-me`) rather than a "write secure code" prompt.
 
 ## The question
 
-> For the same security-sensitive coding tasks, does an agent with `paranoid`
-> loaded produce fewer exploitable solutions than the same agent without it,
-> holding functional correctness roughly equal?
+> For the same security-sensitive tasks, does an agent with the skill loaded
+> produce fewer exploitable solutions than the same agent without it, holding
+> functional correctness equal?
 
-We care about two numbers per condition:
+Two numbers per condition:
 
-- **exploit rate** — share of solutions that pass their functional test but fail
-  a security test (an exploit succeeds). Lower is better.
-- **correctness rate** — share that pass the functional test at all. The skill
-  must not tank this to win on security.
+- **exploit rate among correct solutions** — of the code that actually works, how
+  much is still exploitable. Lower is better.
+- **correctness** — the skill mustn't win on security by breaking functionality.
 
 ## Method
 
-1. **Tasks.** A set of backend tasks, each with (a) a functional test and (b) one
-   or more exploit tests targeting a specific vuln class (IDOR, missing auth,
-   injection, SSRF, …). We start from a small hand-written set in `tasks/` and
-   can extend toward public benchmarks like [BaxBench](https://baxbench.com/)
-   (392 tasks, 14 frameworks) for a larger, third-party-defined run.
-2. **Conditions.** Same model, same prompts, temperature fixed. `baseline` = no
-   skill; `paranoid` = skill loaded. N samples per task per condition.
-3. **Score.** For each solution, run the functional test, then the exploit
-   test(s). Record correctness and exploit outcomes.
-4. **Report.** Exploit rate and correctness per condition, with the delta and a
-   simple confidence interval. Publish the raw per-sample results, the exact
-   prompts, model id, and date so anyone can re-run and check.
+- **Tasks** (`tasks/`): each has a *neutral* spec (no security hints), a
+  **functional** check, and an **exploit** check for a specific class (IDOR,
+  missing authz, SQLi, mass assignment, path traversal).
+- **Conditions**: identical base model; `baseline` = no skill, `paranoid` = skill
+  in context. The generated solutions live in `solutions/<condition>/`.
+- **Score**: `harness/run.py` runs the functional check, then the exploit check,
+  for each solution and reports per-condition rates.
+
+## Result
+
+Matched-model runs, skill vs no-skill:
+
+| Model | Task set | exploit rate (baseline) | exploit rate (paranoid) | delta |
+|---|---|:--:|:--:|:--:|
+| Fable 5.1 | 3 isolated fns, leading specs | 0% | 0% | +0pp |
+| Opus | 3 isolated fns, leading specs | 0% | 0% | +0pp |
+| Opus | 3 isolated fns, neutral/tempting specs | 0% | 0% | +0pp |
+
+**A capable model already writes the secure version of an isolated function
+unprompted.** The skill has no headroom to add value at this granularity.
+
+This is not a broken harness. Against deliberately-insecure vs secure reference
+solutions (`solutions/selftest_insecure`, `solutions/selftest_secure`) it reports
+**100%** and **0%** exploit rates respectively — it detects the difference when
+there is one.
+
+## What it means
+
+Isolated functions are the wrong unit. The vulnerabilities that ship in real
+apps live in cross-cutting **wiring** — an auth check present on one route and
+missing on the next, a request body spread into an update, a search that builds
+SQL — context a model can't hold perfectly across a whole codebase. That is what
+`/hack-me` targets by attacking the **running app**, and where it demonstrably
+finds real bugs (see [`../examples/ledgerlite`](../examples/ledgerlite)).
 
 ## Reproduce
 
 ```bash
-# from repo root — harness lands here next
 cd benchmark
-cat tasks/README.md   # task format
-# ./run.sh --model <id> --n 5   (coming with the first task set)
+
+# sanity-check the harness itself:
+python3 harness/run.py --only mass_assignment_update,idor_session_only,path_traversal_note \
+    solutions/selftest_insecure solutions/selftest_secure     # expect 100% vs 0%
+
+# score a pair of generated conditions:
+python3 harness/run.py solutions/opus_baseline solutions/opus_paranoid
+python3 harness/run.py --only mass_assignment_update,idor_session_only,path_traversal_note \
+    solutions/hard_opus_baseline solutions/hard_opus_paranoid
 ```
+
+To add your own condition, drop one `<task_id>.py` per task into
+`solutions/<name>/` (each defining the function named in that task's `spec.md`)
+and pass that dir to `run.py`. Generate them with any model, with or without the
+skill in context.
 
 ## Honesty rules for this benchmark
 
-- No result in the README until the harness has produced it here.
-- Publish the losses too — tasks where the skill didn't help or hurt correctness.
+- No number in a README until the harness produced it here. (The +0pp above is
+  measured, not assumed.)
+- Report the losses too — this whole page *is* a negative result, kept because
+  it's true and it's why the project pivoted.
 - Report the model and date; a number without them is meaningless as models move.
-- When a public benchmark (BaxBench) is used, follow its methodology and say so,
-  rather than inventing a favorable one.
-
-_Status: harness + first task set in progress._
+- A fuller run belongs on realistic, multi-file apps (BaxBench-style), not just
+  isolated functions — that's the regime where a security tool has room to help.

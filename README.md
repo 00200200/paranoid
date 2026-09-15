@@ -1,37 +1,77 @@
 # 🕵️ paranoid
 
-**Make your coding agent write like it's getting pentested tomorrow.**
+**Point it at your running app. It finds the vulnerabilities, proves each one
+with a real request, patches them, and re-verifies the fix.**
 
-`paranoid` is an [Agent Skill](https://docs.claude.com/en/docs/claude-code/skills)
-for Claude Code, Codex, and Cursor. When your agent touches a trust boundary —
-auth, user input, a database, secrets, an outbound request, an API route — it
-loads a short security playbook and applies the secure default *before* it writes
-the code. Then it can attack your own app to prove the holes are real.
-
-Roughly **half of the functionally-correct backends that LLMs generate are still
-exploitable** ([BaxBench](https://baxbench.com/)). Your tests pass, the feature
-works, and any logged-in user can read anyone else's data. `paranoid` is aimed at
-exactly that gap.
+`paranoid` is an agent skill for Claude Code, Codex, and Cursor. Its core is
+**`/hack-me`** — an authorized, localhost-only self-pentest loop that attacks
+*your own* app the way an attacker would, then closes what it finds.
 
 ```
-why review later when review now
+find  →  prove  →  patch  →  re-verify
 ```
 
 ---
 
-## What it does
+## Why this isn't another "write secure code" skill
 
-- **Threat-models in one line** before writing a feature, so it can't forget who
-  the caller is or what they control.
-- **Applies secure defaults** for the ten vulnerability classes AI-generated apps
-  actually ship — broken access control / IDOR, missing auth, client-trust,
-  injection (SQL/shell/XSS/path), open BaaS rules (Supabase RLS, Firebase),
-  SSRF, leaked secrets, mass assignment, unverified webhooks, and leaky
-  errors/CORS. See [`the vibe-coded top 10`](skills/paranoid/references/vibe-top-10.md).
-- **Runs a 7-question pre-commit gate** so a risky diff doesn't ship unreviewed.
-- **`/hack-me`** — attacks your *own* app on localhost, shows the exploit
-  working, patches it, and re-runs to prove the fix. Localhost-only,
-  non-destructive, your code only.
+I started with the obvious thing — a skill that tells the agent to write secure
+code — and then **benchmarked it honestly** before believing in it. The harness
+([`benchmark/`](benchmark)) generates the same tasks with and without the skill
+and runs real exploits against whatever the model writes.
+
+The result was a clean negative:
+
+| Model | Tasks | Exploit rate **without** skill | **with** skill | Effect |
+|---|---|:--:|:--:|:--:|
+| Fable 5.1 | isolated functions (easy) | 0% | 0% | none |
+| Opus | isolated functions (easy) | 0% | 0% | none |
+| Opus | isolated functions (neutral/tempting) | 0% | 0% | none |
+
+On an isolated function, a capable model already writes the secure version
+unprompted — ownership in the `WHERE` clause, parameterized queries, field
+allow-lists — with no skill at all. **Advice adds nothing there.** (The harness
+isn't rigged: it flags deliberately-insecure reference code at 100% and secure
+code at 0%.)
+
+Real vulnerabilities don't live in one tidy function. They live in the **wiring**
+of a whole running app: auth on one route but not the next, a request body that
+quietly sets `is_admin`, a search box that concatenates SQL. A model can't hold
+all of that in its head while coding. So `paranoid` stops advising and starts
+**attacking the running app**.
+
+## `/hack-me`, proven
+
+Against a small but realistic invoicing API ([`examples/ledgerlite`](examples/ledgerlite)),
+a `hack-me` agent that was told **nothing** about the app's bugs found four by
+probing, proved each with a live request, patched them, and re-verified:
+
+| # | Found by probing the API | Class | Proof | After patch |
+|---|---|---|---|:--:|
+| 1 | Any user reads any invoice | IDOR / broken object auth | HTTP 200 with another user's invoice | **404** |
+| 2 | `/admin/users` open to anyone logged in | broken function auth | full user directory dumped | **403** |
+| 3 | `/search?email=` SQL injection | SQLi | plaintext passwords dumped via `UNION` | **`[]`** |
+| 4 | `/profile` accepts `is_admin` | mass assignment → privilege escalation | regular user became admin | **400** |
+
+Every legitimate request still returns `200` after the fixes. The full
+walkthrough — exact exploit requests, responses, diffs, and re-verification — is
+in [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite/HACKME_REPORT.md).
+Reproduce it: `python3 examples/ledgerlite/app.py`, then run `/hack-me`.
+
+> That target was written as a demo, so it proves the **loop** works end-to-end.
+> Point `/hack-me` at *your* app for your own results.
+
+## What `/hack-me` actually does
+
+1. **Maps** your running app and picks the risk classes it's exposed to.
+2. **Probes** for each — one crafted request that only succeeds if the bug is real.
+3. **Proves** every finding with the actual request/response (no theorizing).
+4. **Patches** the root cause with a minimal, behavior-preserving fix.
+5. **Re-verifies** by replaying the exact exploit — a finding isn't closed until it fails.
+
+Guardrails, always: **your own / authorized targets, localhost only,
+non-destructive proofs.** It won't touch third-party hosts, evade detection, or
+build live malware. See [`commands/hack-me.md`](commands/hack-me.md).
 
 ## Install
 
@@ -39,45 +79,35 @@ why review later when review now
 npx skills add kulchankas/paranoid/skills/paranoid
 ```
 
-Or drop [`skills/paranoid/`](skills/paranoid) into your project's skills
-directory (`.claude/skills/`, `.codex/skills/`, or `.cursor/skills/`). The
-`/hack-me` command lives in [`commands/`](commands) — copy it to
-`.claude/commands/` to use it as a slash command.
+Then copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
+dir (e.g. `.claude/commands/`) so `/hack-me` is available. No dependencies, no
+network calls, no telemetry — it's Markdown your agent reads.
 
-No dependencies, no network calls, no telemetry. It's Markdown your agent reads.
+```bash
+python3 my_app.py            # start your app locally
+/hack-me                     # point the agent at http://localhost:<port>
+```
 
-## See it work
+## Also inside: the paranoid skill (secure-by-default companion)
 
-> **You:** add an endpoint to fetch an invoice by id
->
-> **Agent (paranoid loaded):** This reads a record by a client-supplied `id`, so
-> I'll scope the query to the authenticated user or anyone could read anyone's
-> invoice:
-> ```ts
-> const inv = await db.invoice.findFirst({ where: { id, userId: req.user.id } });
-> if (!inv) return res.sendStatus(404);
-> ```
-> paranoid gate: access-control ✓ · auth ✓ · validation ✓
+The guidance the benchmark tested still earns its place as a **companion while
+you code** and as `hack-me`'s knowledge base — concrete failure modes and fixes
+for the vulnerability classes that actually ship in vibe-coded apps:
 
-Then, if it's running locally:
+- [the vibe-coded top 10](skills/paranoid/references/vibe-top-10.md)
+- references: [auth & access](skills/paranoid/references/auth-access.md) ·
+  [secrets & the client boundary](skills/paranoid/references/secrets-config.md) ·
+  [injection & SSRF](skills/paranoid/references/injection.md) ·
+  [APIs & webhooks](skills/paranoid/references/apis-webhooks.md)
+- a 7-point [pre-commit gate](skills/paranoid/checklists/pre-commit.md)
 
-> **You:** /hack-me
->
-> **Agent:** Target `http://localhost:3000`, your app, non-destructive. Logged in
-> as `alice`, requested `bob`'s invoice `inv_812`… got back Bob's data (IDOR,
-> broken access control). Patched with an ownership check. Re-ran the same
-> request → `404`. Finding closed.
+Load it while building; run `/hack-me` to check whether it held.
 
-## Does it actually help? (benchmark)
+## The benchmark
 
-Claims about security tooling are cheap, so this ships with a reproducible
-harness instead of a vibe. It runs a slice of security-focused code-generation
-tasks with and without the skill and diffs the exploit rate.
-
-- **How to reproduce:** [`benchmark/README.md`](benchmark/README.md)
-- **Results:** _running — the number goes here when the harness has produced it,
-  not before._ (Building trust is the whole point of a security tool; we're not
-  going to headline a figure we haven't measured.)
+An honest, reproducible harness for the question *"does a security skill actually
+reduce vulnerabilities?"* — plus the negative result above and how to re-run it:
+[`benchmark/`](benchmark).
 
 ## Scope & ethics
 
