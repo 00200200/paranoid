@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="paranoid — an agent skill that pentests your own running app: /hack-me finds, proves, patches and re-verifies real vulnerabilities" width="100%">
+</p>
+
 # 🕵️ paranoid
 
 **Point it at your running app. It finds the vulnerabilities, proves each one

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="paranoid — an agent skill that pentests your own running app: it finds the holes, proves them, and patches them">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1016"/><stop offset="1" stop-color="#05070a"/>
+    </linearGradient>
+    <linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f85149"/><stop offset="0.5" stop-color="#d29922"/><stop offset="1" stop-color="#3fb950"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="26%" cy="34%" r="60%">
+      <stop offset="0" stop-color="#1f6feb" stop-opacity="0.20"/><stop offset="1" stop-color="#1f6feb" stop-opacity="0"/>
+    </radialGradient>
+    <style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#glow)"/>
+  <rect x="0" y="0" width="1280" height="640" fill="none" stroke="#161b22" stroke-width="2"/>
+
+  <!-- logo mark -->
+  <rect x="72" y="80" width="70" height="70" rx="15" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+  <text x="88" y="129" font-size="42" font-weight="700"><tspan fill="#3fb950">&gt;</tspan><tspan fill="#f85149">_</tspan></text>
+
+  <!-- kicker -->
+  <text x="162" y="108" font-size="19" letter-spacing="3" fill="#8b949e">AGENT SKILL · CLAUDE CODE · CODEX · CURSOR</text>
+  <text x="162" y="137" font-size="15" letter-spacing="2" fill="#586069">security that does something, not says something</text>
+
+  <!-- wordmark -->
+  <text x="68" y="300" font-size="128" font-weight="800" letter-spacing="-3" fill="#e6edf3">paranoid</text>
+  <rect x="74" y="322" width="372" height="9" rx="4" fill="url(#rg)"/>
+
+  <!-- tagline -->
+  <text x="76" y="396" font-size="35" fill="#c9d1d9">Point it at your running app —</text>
+  <text x="76" y="442" font-size="35" fill="#c9d1d9">it finds the holes, proves them, and patches them.</text>
+
+  <!-- before / after card -->
+  <rect x="72" y="490" width="1136" height="106" rx="15" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+  <text x="102" y="531" font-size="25"><tspan fill="#8b949e">found&#160;&#160;</tspan><tspan fill="#f85149">IDOR · broken authz · SQL injection · privilege escalation</tspan></text>
+  <text x="102" y="569" font-size="25"><tspan fill="#8b949e">fixed&#160;&#160;</tspan><tspan fill="#3fb950">404 · 403 · [ ] · 400</tspan><tspan fill="#586069">  — proven with real requests, then re-verified</tspan></text>
+
+  <text x="1208" y="137" text-anchor="end" font-size="18" fill="#586069">MIT · no telemetry</text>
+</svg>
