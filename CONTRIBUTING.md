@@ -6,11 +6,11 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 15 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 18 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
-  XXE). Unrestricted file upload, permissive CORS, weak password hashing, and
-  ReDoS are still open.
+  XXE, unrestricted upload, permissive CORS, weak password storage). ReDoS,
+  insecure deserialization, and SSRF via DNS-rebinding are still open.
 - **A `/hack-me` framework guide.** We cover ten stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
@@ -25,26 +25,23 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Benchmark: unrestricted file upload.** Add `tasks/unrestricted_file_upload/`
-   (a filename/type the server must allow-list and sanitize — block `../`,
-   dangerous extensions) plus insecure/secure self-test refs. *Done when*
-   `run.py --only unrestricted_file_upload` reports insecure 100% / secure 0%.
-2. **Benchmark: permissive CORS.** Add a task that decides the
-   `Access-Control-Allow-Origin` value; insecure reflects any origin with
-   credentials, secure allow-lists. *Done when* the self-test shows 100% / 0%.
-3. **Benchmark: weak password storage.** Add a task where the insecure ref stores
-   plaintext and the secure ref salts + hashes (stdlib `hashlib.scrypt`/`pbkdf2`).
-   *Done when* the self-test shows 100% / 0%.
-4. **Benchmark: ReDoS task class.** A catastrophic-backtracking regex on user
+1. **Benchmark: ReDoS task class.** A catastrophic-backtracking regex on user
    input, with a *bounded, deterministic* check (careful — timing tests are
    flaky; prefer detecting the vulnerable pattern behaviorally).
-5. **Independent proof: a second app.** A localhost `/hack-me` run against another
+2. **Benchmark: insecure deserialization.** A task where the insecure ref uses
+   `pickle`/`yaml.load` on client data and the secure ref uses a safe loader.
+   *Done when* the self-test shows 100% / 0% (see the harness note about matching
+   input formats across both refs).
+3. **Framework guide: Laravel/Phoenix are done** — request another stack via the
+   framework-guide issue template if yours isn't covered.
+4. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
 
-Recently shipped: CSRF, template-injection, and XXE task classes; the Flask,
-Spring Boot, Laravel, and Phoenix guides; and the harness `--json` flag.
+Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
+permissive-CORS, and weak-password-storage task classes; the Flask, Spring Boot,
+Laravel, and Phoenix guides; and the harness `--json` flag.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
