@@ -6,14 +6,14 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 12 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 14 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
-  injection, open redirect, JWT auth, leaked secrets). CSRF, SSTI, XXE, ReDoS,
-  and insecure deserialization are all still open.
+  injection, open redirect, JWT auth, leaked secrets, CSRF, template injection).
+  XXE, ReDoS, and insecure deserialization are still open.
 - **A `/hack-me` framework guide.** We cover Next.js, FastAPI, Express, Django,
-  Rails, and Go in
+  Rails, Flask, Spring Boot, and Go in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md).
-  Flask, Spring Boot, Laravel, and Phoenix are wanted.
+  Laravel and Phoenix are wanted.
 - **An independent-app proof.** Run `/hack-me` against a public
   intentionally-vulnerable app on localhost and add a receipts report under
   [`examples/`](examples) (see [`examples/vampi`](examples/vampi) for the format).
@@ -24,23 +24,24 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Benchmark: CSRF task class.** Add `tasks/csrf_state_change/` (a state-changing
-   action that must require an unguessable token) plus insecure/secure self-test
-   refs. *Done when* `run.py --only csrf_state_change` reports insecure 100% /
-   secure 0%.
-2. **Benchmark: SSTI task class.** Add `tasks/ssti_template_render/` (user input
-   into a template engine). *Done when* the self-test shows 100% / 0%.
-3. **Framework guide: Flask.** Add a Flask section to `references/frameworks.md`
-   matching the existing structure (routes, where auth lives, run command, probe
-   first). *Done when* it's linked from the "Covered here" line.
-4. **Framework guide: Spring Boot.** Same shape as #3, for Java/Spring.
+1. **Benchmark: XXE task class.** Add `tasks/xxe_xml_parse/` (XML parsed with
+   external entities enabled) plus insecure/secure self-test refs. *Done when*
+   `run.py --only xxe_xml_parse` reports insecure 100% / secure 0%.
+2. **Benchmark: ReDoS task class.** Add a task where a catastrophic-backtracking
+   regex runs on user input, with a bounded, deterministic check. *Done when* the
+   self-test shows 100% / 0%.
+3. **Framework guide: Laravel.** Add a Laravel (PHP) section to
+   `references/frameworks.md` matching the existing structure (routes, where auth
+   lives, run command, probe first). *Done when* it's linked from the "Covered
+   here" line.
+4. **Framework guide: Phoenix.** Same shape as #3, for Elixir/Phoenix.
 5. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
-6. **Docs: a `--json`/summary flag for the harness** so CI and contributors can
-   diff conditions programmatically. *Done when* `run.py` can emit a machine
-   summary without changing the human table.
+
+Recently shipped from this list: CSRF and template-injection task classes, the
+Flask and Spring Boot guides, and the harness `--json` flag.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
