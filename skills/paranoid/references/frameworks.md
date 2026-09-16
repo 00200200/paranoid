@@ -6,7 +6,7 @@ what to probe first. Use this in the **Map** and **Prioritize** steps of
 frameworks — these guides just tell you where to look and how to talk to the app.
 
 Covered here: **Next.js, FastAPI, Express, Django, Ruby on Rails, Flask, Spring
-Boot, Go.**
+Boot, Laravel, Phoenix, Go.**
 
 For every stack the priority order is the same: **broken access control / IDOR →
 missing auth → injection → mass assignment → SSRF → info leaks.** Below is where
@@ -206,6 +206,56 @@ each tends to hide per framework.
 - Thymeleaf `[(${...})]` / `th:utext` with user data → XSS.
 - Exposed Spring Boot Actuator (`/actuator/env`, `/actuator/heapdump`) → secrets
   leak.
+
+## Laravel (PHP)
+
+**Where routes live**
+- `routes/web.php` and `routes/api.php` map paths to controller methods in
+  `app/Http/Controllers`. `php artisan route:list` prints the full map.
+
+**Where auth should be**
+- The `auth` middleware on the route/group for authentication; **authorization**
+  is Policies/Gates (`$this->authorize('update', $post)`) — the common gap is
+  loading a model by id and returning it without a policy check. Scope through the
+  relationship: `auth()->user()->posts()->findOrFail($id)`.
+- Mass assignment: rely on `$fillable` (allow-list), never `$guarded = []` plus
+  `Model::create($request->all())`.
+
+**Run it**
+- `php artisan serve` (default `http://127.0.0.1:8000`), or `./vendor/bin/sail up`.
+
+**Probe first**
+- `Model::find($id)` / route-model binding with no policy → IDOR; a route outside
+  the `auth` group → missing auth.
+- `DB::select("... $q")` / `whereRaw("... $q")` → SQLi (use bindings).
+- `$request->all()` into `create`/`update` with `$guarded = []` → mass assignment
+  (can set `is_admin`, `role`).
+- Blade `{!! $userInput !!}` (unescaped) → XSS; `{{ }}` is safe.
+- `APP_DEBUG=true` reachable → Ignition stack traces + env leak; `.env` served.
+
+## Phoenix (Elixir)
+
+**Where routes live**
+- `lib/<app>_web/router.ex` (`scope`/`pipe_through`) maps to controllers in
+  `lib/<app>_web/controllers`. `mix phx.routes` prints the map.
+
+**Where auth should be**
+- A plug in the router pipeline (e.g. a `:require_auth` plug, or `guardian`) for
+  authentication; ownership is enforced in the context function / Ecto query, not
+  the controller. Scope queries by the current user
+  (`from p in Post, where: p.user_id == ^user.id`).
+
+**Run it**
+- `mix phx.server` (default `http://localhost:4000`).
+
+**Probe first**
+- A controller action taking `params["id"]` and calling a context `get_*!` with no
+  owner scope → IDOR; an action outside the authed pipeline → missing auth.
+- `Repo.query!("... #{q}")` / string-built SQL → SQLi (use parameterized
+  `from`/`^`).
+- `raw(user_input)` in HEEx/EEx templates → XSS (`<%= %>` auto-escapes).
+- `cast/3` including sensitive fields (e.g. `:role`, `:admin`) in the changeset
+  permit list → mass assignment.
 
 ## Go (net/http, chi, gin, echo)
 
