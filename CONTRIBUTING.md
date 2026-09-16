@@ -6,14 +6,15 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 14 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 15 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
-  injection, open redirect, JWT auth, leaked secrets, CSRF, template injection).
-  XXE, ReDoS, and insecure deserialization are still open.
-- **A `/hack-me` framework guide.** We cover Next.js, FastAPI, Express, Django,
-  Rails, Flask, Spring Boot, and Go in
-  [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md).
-  Laravel and Phoenix are wanted.
+  injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
+  XXE). Unrestricted file upload, permissive CORS, weak password hashing, and
+  ReDoS are still open.
+- **A `/hack-me` framework guide.** We cover ten stacks in
+  [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
+  (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
+  Go). Request another via the framework-guide issue template.
 - **An independent-app proof.** Run `/hack-me` against a public
   intentionally-vulnerable app on localhost and add a receipts report under
   [`examples/`](examples) (see [`examples/vampi`](examples/vampi) for the format).
@@ -24,24 +25,26 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Benchmark: XXE task class.** Add `tasks/xxe_xml_parse/` (XML parsed with
-   external entities enabled) plus insecure/secure self-test refs. *Done when*
-   `run.py --only xxe_xml_parse` reports insecure 100% / secure 0%.
-2. **Benchmark: ReDoS task class.** Add a task where a catastrophic-backtracking
-   regex runs on user input, with a bounded, deterministic check. *Done when* the
-   self-test shows 100% / 0%.
-3. **Framework guide: Laravel.** Add a Laravel (PHP) section to
-   `references/frameworks.md` matching the existing structure (routes, where auth
-   lives, run command, probe first). *Done when* it's linked from the "Covered
-   here" line.
-4. **Framework guide: Phoenix.** Same shape as #3, for Elixir/Phoenix.
+1. **Benchmark: unrestricted file upload.** Add `tasks/unrestricted_file_upload/`
+   (a filename/type the server must allow-list and sanitize — block `../`,
+   dangerous extensions) plus insecure/secure self-test refs. *Done when*
+   `run.py --only unrestricted_file_upload` reports insecure 100% / secure 0%.
+2. **Benchmark: permissive CORS.** Add a task that decides the
+   `Access-Control-Allow-Origin` value; insecure reflects any origin with
+   credentials, secure allow-lists. *Done when* the self-test shows 100% / 0%.
+3. **Benchmark: weak password storage.** Add a task where the insecure ref stores
+   plaintext and the secure ref salts + hashes (stdlib `hashlib.scrypt`/`pbkdf2`).
+   *Done when* the self-test shows 100% / 0%.
+4. **Benchmark: ReDoS task class.** A catastrophic-backtracking regex on user
+   input, with a *bounded, deterministic* check (careful — timing tests are
+   flaky; prefer detecting the vulnerable pattern behaviorally).
 5. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
 
-Recently shipped from this list: CSRF and template-injection task classes, the
-Flask and Spring Boot guides, and the harness `--json` flag.
+Recently shipped: CSRF, template-injection, and XXE task classes; the Flask,
+Spring Boot, Laravel, and Phoenix guides; and the harness `--json` flag.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
