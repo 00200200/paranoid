@@ -5,7 +5,8 @@ what to probe first. Use this in the **Map** and **Prioritize** steps of
 [`/hack-me`](../../../commands/hack-me.md). The proof recipes are the same across
 frameworks — these guides just tell you where to look and how to talk to the app.
 
-Covered here: **Next.js, FastAPI, Express, Django, Ruby on Rails, Go.**
+Covered here: **Next.js, FastAPI, Express, Django, Ruby on Rails, Flask, Spring
+Boot, Go.**
 
 For every stack the priority order is the same: **broken access control / IDOR →
 missing auth → injection → mass assignment → SSRF → info leaks.** Below is where
@@ -152,6 +153,59 @@ each tends to hide per framework.
 - `where("name = '#{params[:q]}'")` / string-interpolated SQL → SQLi.
 - `html_safe` / `raw()` on user input → XSS.
 - Missing `authenticate_user!` on an admin/namespaced controller → missing auth.
+
+## Flask (Python)
+
+**Where routes live**
+- `@app.route(...)` / `@bp.route(...)` decorators across `app.py`, a `views.py`,
+  or blueprints registered with `app.register_blueprint(...)`.
+
+**Where auth should be**
+- A decorator (`@login_required` from Flask-Login, or a hand-rolled
+  `before_request`) — Flask ships with **nothing** on by default, so a route
+  with no decorator is fully public. Ownership is manual: scope every query to
+  `current_user`, don't just check `current_user.is_authenticated`.
+
+**Run it**
+- `flask run` or `python app.py` (default `http://127.0.0.1:5000`; watch for
+  `debug=True`, which serves the interactive Werkzeug console — see VAmPI in
+  [`../../../examples/vampi`](../../../examples/vampi)).
+
+**Probe first**
+- Routes taking an id from the URL/args with no owner check → IDOR; unauthenticated
+  → missing auth.
+- `db.session.execute(text(f"... {x}"))` / string-built SQL → SQLi.
+- `render_template_string(user_input)` or `Template(user_input)` → SSTI; user data
+  in `{{ ... | safe }}` → XSS.
+- `subprocess.run(cmd, shell=True)` with user input → command injection.
+- A debug/admin route that dumps data with no `is_admin` check → broken function
+  auth (this is exactly VAmPI Finding 1).
+
+## Spring Boot (Java / Kotlin)
+
+**Where routes live**
+- `@RestController` / `@Controller` classes with `@GetMapping` / `@PostMapping`
+  (etc.) methods, usually under a `controller`/`web` package.
+
+**Where auth should be**
+- Spring Security: an `HttpSecurity` config (`SecurityFilterChain`) plus
+  method-level `@PreAuthorize("hasRole('ADMIN')")` / `@PreAuthorize("#id == principal.id")`.
+  A `permitAll()` that's too broad, or a controller with no method security, is the
+  gap. Object ownership belongs in the query or a `@PreAuthorize` SpEL check.
+
+**Run it**
+- `./mvnw spring-boot:run` or `./gradlew bootRun` (default `http://localhost:8080`).
+
+**Probe first**
+- Endpoints with a path variable id and no `@PreAuthorize`/owner check → IDOR;
+  actuator or admin paths reachable → missing/again function auth.
+- `entityManager.createQuery("... " + x)` / string-concatenated JPQL/SQL → SQLi
+  (use bound parameters / criteria API).
+- Binding the request body straight onto a JPA entity (`@ModelAttribute` /
+  `@RequestBody Entity`) → mass assignment; use a DTO with explicit fields.
+- Thymeleaf `[(${...})]` / `th:utext` with user data → XSS.
+- Exposed Spring Boot Actuator (`/actuator/env`, `/actuator/heapdump`) → secrets
+  leak.
 
 ## Go (net/http, chi, gin, echo)
 
