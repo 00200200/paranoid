@@ -1,0 +1,17 @@
+{
+  "name": "paranoid",
+  "install": "python3 --version && python3 benchmark/harness/run.py benchmark/solutions/selftest_insecure benchmark/solutions/selftest_secure >/dev/null && echo 'benchmark self-test OK'",
+  "ports": [
+    {
+      "name": "ledgerlite",
+      "port": 8071
+    }
+  ],
+  "terminals": [
+    {
+      "name": "ledgerlite",
+      "command": "python3 examples/ledgerlite/app.py",
+      "description": "LedgerLite demo target — the intentionally-vulnerable invoicing API served on http://127.0.0.1:8071. Point /hack-me at it (accounts: alice/tok_alice, bob/tok_bob, admin/tok_admin)."
+    }
+  ]
+}
