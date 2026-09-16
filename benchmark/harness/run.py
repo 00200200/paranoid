@@ -2,11 +2,17 @@
 """paranoid benchmark scorer.
 
 Usage:
-    python3 harness/run.py <solutions_dir> [<solutions_dir> ...]
+    python3 harness/run.py [--only <ids>] [--json] <solutions_dir> [<solutions_dir> ...]
 
 Each <solutions_dir> is one condition; its basename is the label (e.g.
 solutions/baseline, solutions/paranoid). The dir contains one <task_id>.py per
 task, each defining the function named in that task's spec.
+
+Flags:
+  --only a,b,c   score only these task ids.
+  --json         print one machine-readable JSON summary to stdout (for CI /
+                 diffing) instead of the human tables. Per-condition
+                 results/<label>.json are still written either way.
 
 For every task we run two checks against the solution:
   * functional -- does it do the job? (correctness)
@@ -129,6 +135,8 @@ def print_compare(summaries):
 
 def main(argv):
     args = argv[1:]
+    as_json = "--json" in args
+    args = [a for a in args if a != "--json"]
     only = None
     if args and args[0].startswith("--only"):
         if "=" in args[0]:
@@ -155,10 +163,24 @@ def main(argv):
         rows = score_condition(label, d, tasks)
         s = summarize(rows)
         summaries[label] = s
-        print_condition(label, rows, s)
+        if not as_json:
+            print_condition(label, rows, s)
         with open(os.path.join(RESULTS_DIR, label + ".json"), "w") as f:
             json.dump({"condition": label, "rows": rows, "summary": s}, f, indent=2)
-    if len(summaries) >= 2:
+    if as_json:
+        out = {"conditions": summaries}
+        labels = list(summaries)
+        if len(labels) == 2:
+            a, b = labels
+            da = summaries[a]["exploit_rate_among_correct"]
+            db = summaries[b]["exploit_rate_among_correct"]
+            out["comparison"] = {
+                "from": a,
+                "to": b,
+                "delta_exploit_rate_pp": round((db - da) * 100, 1),
+            }
+        print(json.dumps(out, indent=2))
+    elif len(summaries) >= 2:
         print_compare(summaries)
     return 0
 
