@@ -11,13 +11,15 @@ EVIL_NEXTS = [
     "//evil.example",                     # protocol-relative
     "https://myapp.local.evil.com/x",     # look-alike host
     "http://evil.example/",
+    "/\\evil.example",                    # /\host: browsers treat \ as /, i.e. //host
 ]
 
 
 def _external(target, allowed):
     if target is None:
         return False
-    t = str(target)
+    # Browsers treat backslash as slash in URLs, so /\host is protocol-relative.
+    t = str(target).replace("\\", "/")
     p = urlparse(t)
     if p.netloc:
         return p.netloc != allowed
