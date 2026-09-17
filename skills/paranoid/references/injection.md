@@ -106,7 +106,7 @@ const url = new URL(input);
 if (!['http:', 'https:'].includes(url.protocol)) throw new Error('scheme');
 // resolve DNS and reject private / link-local / loopback targets
 const { address } = await dns.lookup(url.hostname);
-if (isPrivate(address)) throw new Error('blocked host'); // 10/8,172.16/12,192.168/16,127/8,169.254/16,::1,fc00::/7
+if (isPrivate(address)) throw new Error('blocked host'); // 10/8,172.16/12,192.168/16,127/8,169.254/16,100.64/10,::1,fc00::/7
 const res = await fetch(url, { redirect: 'manual' });    // don't auto-follow to an internal 302
 ```
 
