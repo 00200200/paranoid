@@ -12,14 +12,23 @@ EVIL_NEXTS = [
     "https://myapp.local.evil.com/x",     # look-alike host
     "http://evil.example/",
     "/\\evil.example",                    # /\host: browsers treat \ as /, i.e. //host
+    # urlparse strips CR/LF from the path, so a "relative" next that smuggles
+    # a second Location header looks on-site unless we inspect the raw value.
+    "/dashboard\r\nLocation: https://evil.example",
+    "/dashboard\nLocation: https://evil.example",
 ]
 
 
 def _external(target, allowed):
     if target is None:
         return False
+    t = str(target)
+    # CR/LF in a Location value is HTTP response splitting: the client sees a
+    # second header, typically another Location to an attacker site.
+    if "\r" in t or "\n" in t:
+        return True
     # Browsers treat backslash as slash in URLs, so /\host is protocol-relative.
-    t = str(target).replace("\\", "/")
+    t = t.replace("\\", "/")
     p = urlparse(t)
     if p.netloc:
         return p.netloc != allowed
