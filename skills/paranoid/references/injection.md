@@ -66,6 +66,20 @@ element.textContent = comment;
 - Defense in depth: a `Content-Security-Policy` that forbids inline script turns
   many XSS bugs into non-events.
 
+## Open redirect
+
+A `?next=` (or `return_to`) value that lands in a `Location` header is an open
+redirect unless you allow-list it. Reject CR/LF too: `urlparse` strips them
+from the path, so `/dashboard\r\nLocation: https://evil.example` looks like a
+relative URL while the raw string injects a second header (response splitting).
+
+```python
+# ✗
+return redirect(request.args.get("next") or "/")
+# ✓ only a same-site relative path, or http(s) on your own host;
+#   reject CR/LF and protocol-relative "//host"
+```
+
 ## Path traversal
 
 ```js
