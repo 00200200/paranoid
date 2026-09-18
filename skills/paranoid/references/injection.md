@@ -135,3 +135,14 @@ Untrusted input into `pickle`, Java/Ruby native deserialization, `yaml.load`,
 XML parsers with external entities (XXE), or regexes built from user input
 (ReDoS) are all injection cousins. Same rule: parse with a safe, structured
 loader; never let input choose what code runs.
+
+```python
+# ✗ nested quantifiers — `'A'*36+'!'` never matches and backtracks exponentially
+re.match(r'^([A-Za-z0-9]+)+$', username)
+# ✓ same language, linear in the input length
+username.isascii() and username.isalnum()
+# or re.fullmatch(r'[A-Za-z0-9]+', username)
+```
+
+Bound the input if you must keep a complex pattern. Don't measure "it was fast
+on happy-path strings" — that's how ReDoS ships.
