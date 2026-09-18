@@ -6,11 +6,12 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 19 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 20 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
-  XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS).
-  Insecure deserialization and SSRF via DNS-rebinding are still open.
+  XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
+  unverified webhooks). Insecure deserialization and SSRF via DNS-rebinding are
+  still open.
 - **A `/hack-me` framework guide.** We cover ten stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
@@ -37,8 +38,9 @@ from the templates) before starting.
    request/response and a re-verified fix.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
-permissive-CORS, weak-password-storage, and ReDoS task classes; the Flask,
-Spring Boot, Laravel, and Phoenix guides; and the harness `--json` flag.
+permissive-CORS, weak-password-storage, ReDoS, and unverified-webhook task
+classes; the Flask, Spring Boot, Laravel, and Phoenix guides; and the harness
+`--json` flag.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
