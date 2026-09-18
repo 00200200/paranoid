@@ -17,7 +17,10 @@ def handle_webhook(raw_body, signature, secret, dispatch):
         return False
     if not hmac.compare_digest(submitted, expected):
         return False
-    event = json.loads(raw)
+    try:
+        event = json.loads(raw)
+    except json.JSONDecodeError:
+        return False
     if not isinstance(event, dict):
         return False
     dispatch(event)
