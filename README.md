@@ -165,7 +165,7 @@ defensive, local.
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
-- [x] More benchmark task classes — 18 now (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage)
+- [x] More benchmark task classes — 19 now (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS)
 - [x] `/hack-me` framework guides (Next.js, FastAPI, Express)
 
 `paranoid` is v0.1 and actively developed — issues and PRs welcome.
