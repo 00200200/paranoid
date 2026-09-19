@@ -76,6 +76,9 @@ app.post('/webhooks/stripe',
 
 - GitHub: HMAC-SHA256 over the raw body with your secret, compared to
   `X-Hub-Signature-256` using a **constant-time** compare (`crypto.timingSafeEqual`).
+- The usual skip: `JSON.parse(req.body)` and credit the customer with no HMAC
+  check. A forged `payment.succeeded` then lands as an unauthenticated POST.
+  Verify first (constant-time, against the raw bytes), parse after.
 - Guard against replay: honor timestamps/tolerances and treat delivery ids as
   idempotency keys so a re-sent event isn't processed twice.
 
