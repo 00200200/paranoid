@@ -7,26 +7,25 @@
       <stop offset="0" stop-color="#f85149"/><stop offset="1" stop-color="#3fb950"/>
     </linearGradient>
     <linearGradient id="bezel" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2bd455"/><stop offset="0.5" stop-color="#2ee6d6"/><stop offset="1" stop-color="#4c8dff"/>
+      <stop offset="0" stop-color="#2bd455"/><stop offset="1" stop-color="#4c8dff"/>
     </linearGradient>
     <style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
   </defs>
 
   <rect width="1280" height="640" fill="url(#bg)"/>
 
-  <!-- mascot -->
+  <!-- mascot: suspicious side-eye -->
   <g>
     <rect x="120" y="232" width="184" height="176" rx="40" fill="url(#bezel)"/>
-    <rect x="146" y="258" width="132" height="124" rx="24" fill="#0b0f14"/>
-    <path d="M168 284 l28 9" stroke="#e6edf3" stroke-width="5.5" stroke-linecap="round"/>
-    <path d="M256 284 l-28 9" stroke="#e6edf3" stroke-width="5.5" stroke-linecap="round"/>
-    <ellipse cx="191" cy="312" rx="18" ry="21" fill="#e6edf3"/>
-    <ellipse cx="233" cy="312" rx="18" ry="21" fill="#e6edf3"/>
-    <circle cx="199" cy="307" r="8" fill="#0b0f14"/>
-    <circle cx="241" cy="307" r="8" fill="#0b0f14"/>
-    <circle cx="202" cy="304" r="2.8" fill="#e6edf3"/>
-    <circle cx="244" cy="304" r="2.8" fill="#e6edf3"/>
-    <text x="212" y="366" font-size="21" font-weight="700" text-anchor="middle"><tspan fill="#2bd455">&gt;</tspan><tspan fill="#ff6b6b">_</tspan></text>
+    <rect x="144" y="256" width="136" height="128" rx="28" fill="#0b0f14"/>
+    <path d="M168 292 L206 303" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
+    <path d="M262 289 L226 300" stroke="#e6edf3" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="192" cy="322" rx="20" ry="23" fill="#e6edf3"/>
+    <ellipse cx="236" cy="324" rx="19" ry="12" fill="#e6edf3"/>
+    <circle cx="200" cy="319" r="9" fill="#0b0f14"/>
+    <circle cx="243" cy="324" r="8" fill="#0b0f14"/>
+    <circle cx="203" cy="315" r="3" fill="#e6edf3"/>
+    <circle cx="246" cy="321" r="2.4" fill="#e6edf3"/>
   </g>
 
   <!-- wordmark + one line -->
