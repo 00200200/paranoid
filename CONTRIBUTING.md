@@ -6,11 +6,11 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 20 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 21 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
   XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
-  unverified webhooks). Insecure deserialization and SSRF via DNS-rebinding are
+  unverified webhooks, insecure deserialization). SSRF via DNS-rebinding is
   still open.
 - **A `/hack-me` framework guide.** We cover ten stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
@@ -26,20 +26,20 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Benchmark: insecure deserialization.** A task where the insecure ref uses
-   `pickle`/`yaml.load` on client data and the secure ref uses a safe loader.
-   *Done when* the self-test shows 100% / 0% (see the harness note about matching
-   input formats across both refs).
-2. **Framework guide: Laravel/Phoenix are done** — request another stack via the
+1. **Framework guide: Laravel/Phoenix are done** — request another stack via the
    framework-guide issue template if yours isn't covered.
+2. **Benchmark: SSRF via DNS-rebinding.** A task where the insecure ref validates
+   the hostname then resolves it again at fetch time (TOCTOU), and the secure ref
+   pins the IP it already validated. *Done when* the self-test shows 100% / 0%
+   deterministically, without needing real network access.
 3. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
-permissive-CORS, weak-password-storage, ReDoS, and unverified-webhook task
-classes; the Flask, Spring Boot, Laravel, and Phoenix guides; and the harness
+permissive-CORS, weak-password-storage, ReDoS, unverified-webhook, and
+insecure-deserialization task classes; the Flask, Spring Boot, Laravel, and Phoenix guides; and the harness
 `--json` flag.
 
 These map to the issue templates in
