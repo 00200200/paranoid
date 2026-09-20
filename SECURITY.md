@@ -12,6 +12,13 @@ The example targets ([`examples/ledgerlite`](examples/ledgerlite),
 [`examples/vampi`](examples/vampi)) are **intentionally vulnerable** and meant to
 run only on `localhost`. Never deploy them anywhere reachable.
 
+The same goes for [`benchmark/solutions/selftest_insecure/`](benchmark/solutions/selftest_insecure):
+every file there is a **deliberately exploitable reference** (SQL injection,
+pickle deserialization, path traversal, and so on) that exists so CI can prove
+the harness still detects a known bug. They are never imported by the skill or
+the `/hack-me` command, and they are not a vulnerability in this project — please
+don't file reports against them.
+
 ## Reporting a vulnerability in this repo
 
 The skills and benchmark here are Markdown and dependency-free Python that your

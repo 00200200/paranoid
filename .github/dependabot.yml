@@ -1,0 +1,13 @@
+version: 2
+
+# The workflow pins actions to commit SHAs so a moved tag can't change what runs.
+# Pinning alone goes stale, though — this keeps those pins current so we still
+# pick up upstream security fixes. There are no application dependencies to
+# track: the skill is Markdown and the harness is standard-library Python.
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
