@@ -143,7 +143,7 @@ Load it while building; run `/hack-me` to check whether it held.
 ## The benchmark
 
 A reproducible harness for *"does a security skill actually reduce
-vulnerabilities?"* — 21 vulnerability classes, each with a neutral spec, a
+vulnerabilities?"* — 22 vulnerability classes, each with a neutral spec, a
 functional check and a real exploit check. CI asserts on every push that the
 deliberately-insecure references still score 100% and the secure ones 0%, so the
 benchmark can't silently rot. Details and how to re-run it: [`benchmark/`](benchmark).
@@ -160,10 +160,10 @@ or produce live malware, and it will decline to. See [SECURITY.md](SECURITY.md).
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
-- [x] 21 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization)
+- [x] 22 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization, SSRF via DNS-rebinding)
 - [x] `/hack-me` framework guides — 10 stacks
 - [ ] A second independent-app proof
-- [ ] SSRF via DNS-rebinding task class
+- [x] SSRF via DNS-rebinding task class
 
 `paranoid` is v0.1 and actively developed — issues and PRs welcome.
 

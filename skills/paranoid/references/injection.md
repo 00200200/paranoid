@@ -126,6 +126,7 @@ const res = await fetch(url, { redirect: 'manual' });    // don't auto-follow to
 
 - The prize is usually cloud metadata (`169.254.169.254`) or internal admin
   services. Block by resolved IP, not by hostname string (DNS rebinding).
+- Pin the validated IP at fetch time (or connect to the IP directly with a `Host` header) to eliminate the TOCTOU gap between DNS validation and request execution.
 - Allow-list hosts if you can (you rarely need to fetch *arbitrary* URLs).
 - Disable auto-redirects, or re-validate the target on each hop.
 
