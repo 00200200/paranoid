@@ -34,7 +34,7 @@ Say the scope back to the user and get a "go" before the first request.
    how to start it, whether seed/test users exist). Ask the user for the base URL
    and, if needed, two test accounts (attacker + victim) — never real credentials
    beyond a local dev login. If it's Next.js, FastAPI, Express, Django, Rails,
-   Flask, Spring Boot, Laravel, Phoenix, or Go, the companion `paranoid` skill's
+   Flask, Spring Boot, Laravel, Phoenix, Go, NestJS, or ASP.NET Core, the companion `paranoid` skill's
    [`references/frameworks.md`](../skills/paranoid/references/frameworks.md) says
    exactly where routes and auth live and what to probe first.
 
