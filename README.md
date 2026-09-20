@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="paranoid — an agent skill that pentests your own running app: /hack-me finds, proves, patches and re-verifies real vulnerabilities" width="100%">
+  <img src="assets/banner.svg" alt="paranoid — your app is guilty until proven secure" width="100%">
 </p>
 
 <p align="center">
@@ -12,79 +12,45 @@
 
 # 🕵️ paranoid
 
-**Your app is guilty until proven secure.** `/hack-me` breaks into your own
-running app, proves each hole with a real request, patches it, and re-verifies —
-on localhost, with receipts.
-
-`paranoid` is an agent skill for Claude Code, Codex, and Cursor. Its core is
-**`/hack-me`** — an authorized, localhost-only self-pentest loop that attacks
-*your own* app the way an attacker would, then closes what it finds.
+An agent skill that pentests the app you're building. `/hack-me` attacks your own
+running app the way an attacker would, then closes what it finds:
 
 ```
 find  →  prove  →  patch  →  re-verify
 ```
 
+Nothing is called a bug until a real HTTP request proves it, and no fix is done
+until that exact exploit stops working.
+
 <p align="center">
   <img src="assets/hack-me-demo.svg" alt="hack-me finds, proves, patches and re-verifies four real vulnerabilities in a running app" width="760">
 </p>
 
+## Quickstart
+
+```bash
+npx skills add kulchankas/paranoid/skills/paranoid
+```
+
+Copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
+directory (e.g. `.claude/commands/`), start your app, and point the agent at it:
+
+```bash
+python3 my_app.py     # your app, running locally
+/hack-me              # → http://localhost:<port>
+```
+
+No dependencies, no network calls, no telemetry — it's Markdown your agent reads.
+
 ---
 
-## Why this isn't another "write secure code" skill
+## Receipts
 
-I started with the obvious thing — a skill that tells the agent to write secure
-code — and then **benchmarked it honestly** before believing in it. The harness
-([`benchmark/`](benchmark)) generates the same tasks with and without the skill
-and runs real exploits against whatever the model writes.
+### On an app we didn't write
 
-The result was a clean negative:
-
-| Model | Tasks | Exploit rate **without** skill | **with** skill | Effect |
-|---|---|:--:|:--:|:--:|
-| Fable 5.1 | isolated functions (easy) | 0% | 0% | none |
-| Opus | isolated functions (easy) | 0% | 0% | none |
-| Opus | isolated functions (neutral/tempting) | 0% | 0% | none |
-
-On an isolated function, a capable model already writes the secure version
-unprompted — ownership in the `WHERE` clause, parameterized queries, field
-allow-lists — with no skill at all. **Advice adds nothing there.** (The harness
-isn't rigged: it flags deliberately-insecure reference code at 100% and secure
-code at 0%.)
-
-Real vulnerabilities don't live in one tidy function. They live in the **wiring**
-of a whole running app: auth on one route but not the next, a request body that
-quietly sets `is_admin`, a search box that concatenates SQL. A model can't hold
-all of that in its head while coding. So `paranoid` stops advising and starts
-**attacking the running app**.
-
-## `/hack-me`, proven
-
-Against a small but realistic invoicing API ([`examples/ledgerlite`](examples/ledgerlite)),
-a `hack-me` agent that was told **nothing** about the app's bugs found four by
-probing, proved each with a live request, patched them, and re-verified:
-
-| # | Found by probing the API | Class | Proof | After patch |
-|---|---|---|---|:--:|
-| 1 | Any user reads any invoice | IDOR / broken object auth | HTTP 200 with another user's invoice | **404** |
-| 2 | `/admin/users` open to anyone logged in | broken function auth | full user directory dumped | **403** |
-| 3 | `/search?email=` SQL injection | SQLi | plaintext passwords dumped via `UNION` | **`[]`** |
-| 4 | `/profile` accepts `is_admin` | mass assignment → privilege escalation | regular user became admin | **400** |
-
-Every legitimate request still returns `200` after the fixes. The full
-walkthrough — exact exploit requests, responses, diffs, and re-verification — is
-in [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite/HACKME_REPORT.md).
-Reproduce it: `python3 examples/ledgerlite/app.py`, then run `/hack-me`.
-
-> That target was written as a demo, so it proves the **loop** works end-to-end.
-> Point `/hack-me` at *your* app for your own results.
-
-### Proven on an app we didn't write
-
-The harder claim is code we don't control. Pointed at [OWASP **VAmPI**](https://github.com/erev0s/VAmPI)
+The hard claim is code we don't control. Pointed at [OWASP **VAmPI**](https://github.com/erev0s/VAmPI)
 — a well-known third-party vulnerable API — with nothing but its URL, `/hack-me`
-found, proved, patched and re-verified **six** real bugs, including SQL-injecting
-the admin's password out through the API and an unauthenticated endpoint dumping
-every user's plaintext password:
+found, proved, patched and re-verified **six** real bugs:
 
 <p align="center">
   <img src="assets/vampi-receipts.svg" alt="hack-me finds, proves, patches and re-verifies six real vulnerabilities in OWASP VAmPI" width="760">
@@ -104,69 +70,100 @@ critical password dump stayed open until patched. `/hack-me` caught it by
 replaying every exploit instead of trusting the flag. Full receipts:
 [`examples/vampi/HACKME_REPORT.md`](examples/vampi/HACKME_REPORT.md).
 
+### On a demo app, start to finish
+
+Against a small invoicing API ([`examples/ledgerlite`](examples/ledgerlite)), an
+agent told **nothing** about the app's bugs found four by probing:
+
+| # | Found by probing the API | Class | After patch |
+|---|---|---|:--:|
+| 1 | Any user reads any invoice | IDOR / broken object auth | **404** |
+| 2 | `/admin/users` open to anyone logged in | broken function auth | **403** |
+| 3 | `/search?email=` SQL injection (dumped passwords) | SQLi | **`[]`** |
+| 4 | `/profile` accepts `is_admin` | mass assignment → privesc | **400** |
+
+Every legitimate request still returns `200` afterwards. Reproduce it yourself:
+`python3 examples/ledgerlite/app.py`, then run `/hack-me`. Walkthrough with exact
+requests and diffs: [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite/HACKME_REPORT.md).
+
 ## What `/hack-me` actually does
 
 1. **Maps** your running app and picks the risk classes it's exposed to.
-2. **Probes** for each — one crafted request that only succeeds if the bug is real.
+2. **Probes** each — one crafted request that only succeeds if the bug is real.
 3. **Proves** every finding with the actual request/response (no theorizing).
 4. **Patches** the root cause with a minimal, behavior-preserving fix.
 5. **Re-verifies** by replaying the exact exploit — a finding isn't closed until it fails.
 
-Guardrails, always: **your own / authorized targets, localhost only,
-non-destructive proofs.** It won't touch third-party hosts, evade detection, or
-build live malware. See [`commands/hack-me.md`](commands/hack-me.md).
+It knows where routes and auth live in ten stacks (Next.js, FastAPI, Express,
+Django, Rails, Flask, Spring Boot, Laravel, Phoenix, Go) — see
+[`references/frameworks.md`](skills/paranoid/references/frameworks.md). Guardrails
+apply throughout; see [Scope & ethics](#scope--ethics).
 
-## Install
+## Why this isn't another "write secure code" skill
 
-```bash
-npx skills add kulchankas/paranoid/skills/paranoid
-```
+It started as the obvious thing — guidance telling the agent to write secure code
+— and then got **benchmarked honestly** before anyone believed it. The harness
+([`benchmark/`](benchmark)) generates the same tasks with and without the skill
+and runs real exploits against whatever the model writes.
 
-Then copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
-dir (e.g. `.claude/commands/`) so `/hack-me` is available. No dependencies, no
-network calls, no telemetry — it's Markdown your agent reads.
+The result was a clean negative:
 
-```bash
-python3 my_app.py            # start your app locally
-/hack-me                     # point the agent at http://localhost:<port>
-```
+| Model | Tasks | Exploit rate **without** skill | **with** skill | Effect |
+|---|---|:--:|:--:|:--:|
+| Fable 5.1 | isolated functions (easy) | 0% | 0% | none |
+| Opus | isolated functions (easy) | 0% | 0% | none |
+| Opus | isolated functions (neutral/tempting) | 0% | 0% | none |
 
-## Also inside: the paranoid skill (secure-by-default companion)
+On an isolated function a capable model already writes the secure version
+unprompted — ownership in the `WHERE` clause, parameterized queries, field
+allow-lists. **Advice adds nothing there.** (The harness isn't rigged: it flags
+deliberately-insecure reference code at 100% and secure code at 0%, and CI
+asserts that on every push.)
+
+Real vulnerabilities don't live in one tidy function. They live in the **wiring**
+of a whole running app: auth on one route but not the next, a request body that
+quietly sets `is_admin`, a search box that concatenates SQL. So `paranoid` stops
+advising and starts attacking the running app.
+
+## Also inside: the paranoid skill
 
 The guidance the benchmark tested still earns its place as a **companion while
-you code** and as `hack-me`'s knowledge base — concrete failure modes and fixes
-for the vulnerability classes that actually ship in vibe-coded apps:
+you code** and as `hack-me`'s knowledge base:
 
 - [the vibe-coded top 10](skills/paranoid/references/vibe-top-10.md)
 - references: [auth & access](skills/paranoid/references/auth-access.md) ·
   [secrets & the client boundary](skills/paranoid/references/secrets-config.md) ·
   [injection & SSRF](skills/paranoid/references/injection.md) ·
   [APIs & webhooks](skills/paranoid/references/apis-webhooks.md) ·
-  [`/hack-me` framework guides](skills/paranoid/references/frameworks.md)
+  [framework guides](skills/paranoid/references/frameworks.md)
 - a 7-point [pre-commit gate](skills/paranoid/checklists/pre-commit.md)
 
 Load it while building; run `/hack-me` to check whether it held.
 
 ## The benchmark
 
-An honest, reproducible harness for the question *"does a security skill actually
-reduce vulnerabilities?"* — plus the negative result above and how to re-run it:
-[`benchmark/`](benchmark).
+A reproducible harness for *"does a security skill actually reduce
+vulnerabilities?"* — 21 vulnerability classes, each with a neutral spec, a
+functional check and a real exploit check. CI asserts on every push that the
+deliberately-insecure references still score 100% and the secure ones 0%, so the
+benchmark can't silently rot. Details and how to re-run it: [`benchmark/`](benchmark).
 
 ## Scope & ethics
 
 `paranoid` secures **your** code and pentests **your** running app, with your
-say-so. It is not built to target third-party systems, scan hosts you don't own,
-evade detection, or produce live malware, and it will decline to. Authorized,
-defensive, local.
+say-so: authorized targets, localhost only, non-destructive proofs. It is not
+built to target third-party systems, scan hosts you don't own, evade detection,
+or produce live malware, and it will decline to. See [SECURITY.md](SECURITY.md).
 
 ## Roadmap
 
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
-- [x] More benchmark task classes — 21 now (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization)
-- [x] `/hack-me` framework guides (Next.js, FastAPI, Express)
+- [x] 21 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization)
+- [x] `/hack-me` framework guides — 10 stacks
+- [ ] A second independent-app proof
+- [ ] SSRF via DNS-rebinding task class
 
 `paranoid` is v0.1 and actively developed — issues and PRs welcome.
 

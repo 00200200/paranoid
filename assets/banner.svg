@@ -1,14 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="paranoid — your app is guilty until proven secure. It breaks in, proves it, and patches the hole.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="paranoid — your app is guilty until proven secure">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0b1016"/><stop offset="1" stop-color="#05070a"/>
+      <stop offset="0" stop-color="#0d1219"/><stop offset="1" stop-color="#06080c"/>
     </linearGradient>
     <linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#f85149"/><stop offset="0.5" stop-color="#d29922"/><stop offset="1" stop-color="#3fb950"/>
+      <stop offset="0" stop-color="#f85149"/><stop offset="1" stop-color="#3fb950"/>
     </linearGradient>
-    <radialGradient id="glow" cx="24%" cy="34%" r="62%">
-      <stop offset="0" stop-color="#1f6feb" stop-opacity="0.20"/><stop offset="1" stop-color="#1f6feb" stop-opacity="0"/>
-    </radialGradient>
     <linearGradient id="bezel" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#2bd455"/><stop offset="0.5" stop-color="#2ee6d6"/><stop offset="1" stop-color="#4c8dff"/>
     </linearGradient>
@@ -16,41 +13,24 @@
   </defs>
 
   <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect width="1280" height="640" fill="url(#glow)"/>
-  <rect x="0" y="0" width="1280" height="640" fill="none" stroke="#161b22" stroke-width="2"/>
 
-  <!-- kicker -->
-  <text x="74" y="98" font-size="19" letter-spacing="3" fill="#8b949e">AGENT SKILL · CLAUDE CODE · CODEX · CURSOR</text>
-  <text x="74" y="126" font-size="16" letter-spacing="2" fill="#586069">trust issues, as a service</text>
-
-  <!-- wordmark -->
-  <text x="70" y="282" font-size="122" font-weight="800" letter-spacing="-3" fill="#e6edf3">paranoid</text>
-  <rect x="74" y="304" width="360" height="9" rx="4" fill="url(#rg)"/>
-
-  <!-- taglines -->
-  <text x="76" y="376" font-size="36" fill="#c9d1d9">Your app is guilty until proven secure.</text>
-  <text x="76" y="418" font-size="27" fill="#8b949e">It breaks in, proves it, and patches the hole — on localhost, with receipts.</text>
-
-  <!-- mascot: a nervous, wide-eyed terminal that trusts nothing (bright bezel, dark screen) -->
+  <!-- mascot -->
   <g>
-    <rect x="946" y="120" width="236" height="224" rx="46" fill="url(#bezel)"/>
-    <rect x="972" y="150" width="184" height="164" rx="30" fill="#0b0f14"/>
-    <path d="M1000 192 l34 11" stroke="#e6edf3" stroke-width="6" stroke-linecap="round"/>
-    <path d="M1128 192 l-34 11" stroke="#e6edf3" stroke-width="6" stroke-linecap="round"/>
-    <ellipse cx="1040" cy="230" rx="23" ry="27" fill="#e6edf3"/>
-    <ellipse cx="1088" cy="230" rx="23" ry="27" fill="#e6edf3"/>
-    <circle cx="1030" cy="225" r="10" fill="#0b0f14"/>
-    <circle cx="1078" cy="225" r="10" fill="#0b0f14"/>
-    <circle cx="1027" cy="221" r="3.2" fill="#e6edf3"/>
-    <circle cx="1075" cy="221" r="3.2" fill="#e6edf3"/>
-    <text x="1064" y="300" font-size="26" font-weight="700" text-anchor="middle"><tspan fill="#2bd455">&gt;</tspan><tspan fill="#ff6b6b">_</tspan></text>
-    <path d="M1166 138 c-8 12 -12 18 -12 24 a12 12 0 0 0 24 0 c0 -6 -4 -12 -12 -24 z" fill="#eafcff" stroke="#4c8dff" stroke-width="2"/>
+    <rect x="120" y="232" width="184" height="176" rx="40" fill="url(#bezel)"/>
+    <rect x="146" y="258" width="132" height="124" rx="24" fill="#0b0f14"/>
+    <path d="M168 284 l28 9" stroke="#e6edf3" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M256 284 l-28 9" stroke="#e6edf3" stroke-width="5.5" stroke-linecap="round"/>
+    <ellipse cx="191" cy="312" rx="18" ry="21" fill="#e6edf3"/>
+    <ellipse cx="233" cy="312" rx="18" ry="21" fill="#e6edf3"/>
+    <circle cx="199" cy="307" r="8" fill="#0b0f14"/>
+    <circle cx="241" cy="307" r="8" fill="#0b0f14"/>
+    <circle cx="202" cy="304" r="2.8" fill="#e6edf3"/>
+    <circle cx="244" cy="304" r="2.8" fill="#e6edf3"/>
+    <text x="212" y="366" font-size="21" font-weight="700" text-anchor="middle"><tspan fill="#2bd455">&gt;</tspan><tspan fill="#ff6b6b">_</tspan></text>
   </g>
 
-  <!-- before / after proof strip -->
-  <rect x="72" y="486" width="1136" height="106" rx="15" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-  <text x="102" y="527" font-size="25"><tspan fill="#8b949e">found&#160;&#160;</tspan><tspan fill="#f85149">IDOR · broken authz · SQL injection · privilege escalation</tspan></text>
-  <text x="102" y="565" font-size="25"><tspan fill="#8b949e">fixed&#160;&#160;</tspan><tspan fill="#3fb950">404 · 403 · [ ] · 400</tspan><tspan fill="#586069">  — proven with real requests, then re-verified</tspan></text>
-
-  <text x="1208" y="624" text-anchor="end" font-size="17" fill="#586069">MIT · no telemetry</text>
+  <!-- wordmark + one line -->
+  <text x="356" y="330" font-size="132" font-weight="800" letter-spacing="-4" fill="#e6edf3">paranoid</text>
+  <rect x="360" y="354" width="208" height="7" rx="3.5" fill="url(#rg)"/>
+  <text x="360" y="410" font-size="32" fill="#9aa4b1">Your app is guilty until proven secure.</text>
 </svg>
