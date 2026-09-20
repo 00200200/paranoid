@@ -11,6 +11,10 @@ INTERNAL_URLS = [
     "http://127.0.0.1:8080/admin",
     "http://10.0.0.5/internal",
     "http://[::1]:9200/",
+    # RFC 6598 CGNAT (100.64/10). Alibaba metadata lives here; ipaddress.is_private
+    # does not cover this range, so a filter that only checks that flag will fetch it.
+    "http://100.100.100.200/latest/meta-data/",
+    "http://[::ffff:100.100.100.200]/latest/meta-data/",  # IPv4-mapped same target
 ]
 
 

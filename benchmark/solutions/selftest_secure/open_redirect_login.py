@@ -6,10 +6,15 @@ from urllib.parse import urlparse
 def safe_redirect_target(next_url, allowed_host):
     if not next_url:
         return "/"
-    # protocol-relative ("//host/...") is an absolute URL to another host
-    if next_url.startswith("//"):
+    # CR/LF in a Location value injects another header (response splitting).
+    if "\r" in next_url or "\n" in next_url:
         return "/"
-    parsed = urlparse(next_url)
+    # Browsers treat \ as / in URLs, so /\host is the same as //host.
+    candidate = next_url.replace("\\", "/")
+    # protocol-relative ("//host/...") is an absolute URL to another host
+    if candidate.startswith("//"):
+        return "/"
+    parsed = urlparse(candidate)
     if not parsed.scheme and not parsed.netloc:
         return next_url  # a plain relative path stays on-site
     if parsed.scheme in ("http", "https") and parsed.netloc == allowed_host:

@@ -66,6 +66,20 @@ element.textContent = comment;
 - Defense in depth: a `Content-Security-Policy` that forbids inline script turns
   many XSS bugs into non-events.
 
+## Open redirect
+
+A `?next=` (or `return_to`) value that lands in a `Location` header is an open
+redirect unless you allow-list it. Reject CR/LF too: `urlparse` strips them
+from the path, so `/dashboard\r\nLocation: https://evil.example` looks like a
+relative URL while the raw string injects a second header (response splitting).
+
+```python
+# ✗
+return redirect(request.args.get("next") or "/")
+# ✓ only a same-site relative path, or http(s) on your own host;
+#   reject CR/LF and protocol-relative "//host"
+```
+
 ## Path traversal
 
 ```js
@@ -106,7 +120,7 @@ const url = new URL(input);
 if (!['http:', 'https:'].includes(url.protocol)) throw new Error('scheme');
 // resolve DNS and reject private / link-local / loopback targets
 const { address } = await dns.lookup(url.hostname);
-if (isPrivate(address)) throw new Error('blocked host'); // 10/8,172.16/12,192.168/16,127/8,169.254/16,::1,fc00::/7
+if (isPrivate(address)) throw new Error('blocked host'); // 10/8,172.16/12,192.168/16,127/8,169.254/16,100.64/10,::1,fc00::/7
 const res = await fetch(url, { redirect: 'manual' });    // don't auto-follow to an internal 302
 ```
 
@@ -121,3 +135,14 @@ Untrusted input into `pickle`, Java/Ruby native deserialization, `yaml.load`,
 XML parsers with external entities (XXE), or regexes built from user input
 (ReDoS) are all injection cousins. Same rule: parse with a safe, structured
 loader; never let input choose what code runs.
+
+```python
+# ✗ nested quantifiers — `'A'*36+'!'` never matches and backtracks exponentially
+re.match(r'^([A-Za-z0-9]+)+$', username)
+# ✓ same language, linear in the input length
+username.isascii() and username.isalnum()
+# or re.fullmatch(r'[A-Za-z0-9]+', username)
+```
+
+Bound the input if you must keep a complex pattern. Don't measure "it was fast
+on happy-path strings" — that's how ReDoS ships.
