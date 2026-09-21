@@ -6,12 +6,11 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 21 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 22 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
   XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
-  unverified webhooks, insecure deserialization). SSRF via DNS-rebinding is
-  still open.
+  unverified webhooks, insecure deserialization, SSRF via DNS-rebinding).
 - **A `/hack-me` framework guide.** We cover twelve stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
@@ -26,20 +25,26 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Framework guide: Laravel, Phoenix, NestJS, and ASP.NET Core are done** — request another stack via the
-   framework-guide issue template if yours isn't covered.
-2. **Benchmark: SSRF via DNS-rebinding.** A task where the insecure ref validates
-   the hostname then resolves it again at fetch time (TOCTOU), and the secure ref
-   pins the IP it already validated. *Done when* the self-test shows 100% / 0%
-   deterministically, without needing real network access.
+1. **Framework guide: Laravel, Phoenix, NestJS and ASP.NET Core are done** —
+   request another stack via the framework-guide issue template if yours isn't
+   covered.
+2. **Benchmark: a matched-model run across all 22 classes.** The numbers in
+   [`benchmark/README.md`](benchmark/README.md) only cover three classes; the
+   rest are harness-verified but have never been scored against a model. Generate
+   `solutions/<model>_baseline/` and `solutions/<model>_paranoid/` (same model,
+   same settings, skill in context for one and not the other) and score them.
+   *Done when* both conditions cover all 22 tasks, the raw solutions are
+   committed, and the report states the model and date. A negative result is a
+   perfectly good result here — see the honesty rules.
 3. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
-permissive-CORS, weak-password-storage, ReDoS, unverified-webhook, and
-insecure-deserialization task classes; the Flask, Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; and the harness
+permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
+insecure-deserialization, and SSRF via DNS-rebinding task classes; the Flask,
+Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; and the harness
 `--json` flag.
 
 These map to the issue templates in
