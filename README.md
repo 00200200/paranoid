@@ -94,8 +94,8 @@ requests and diffs: [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite
 4. **Patches** the root cause with a minimal, behavior-preserving fix.
 5. **Re-verifies** by replaying the exact exploit — a finding isn't closed until it fails.
 
-It knows where routes and auth live in ten stacks (Next.js, FastAPI, Express,
-Django, Rails, Flask, Spring Boot, Laravel, Phoenix, Go) — see
+It knows where routes and auth live in twelve stacks (Next.js, FastAPI, Express,
+Django, Rails, Flask, Spring Boot, Laravel, Phoenix, Go, NestJS, ASP.NET Core) — see
 [`references/frameworks.md`](skills/paranoid/references/frameworks.md). Guardrails
 apply throughout; see [Scope & ethics](#scope--ethics).
 

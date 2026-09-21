@@ -6,7 +6,7 @@ what to probe first. Use this in the **Map** and **Prioritize** steps of
 frameworks — these guides just tell you where to look and how to talk to the app.
 
 Covered here: **Next.js, FastAPI, Express, Django, Ruby on Rails, Flask, Spring
-Boot, Laravel, Phoenix, Go.**
+Boot, Laravel, Phoenix, Go, NestJS, ASP.NET Core.**
 
 For every stack the priority order is the same: **broken access control / IDOR →
 missing auth → injection → mass assignment → SSRF → info leaks.** Below is where
@@ -284,6 +284,51 @@ each tends to hide per framework.
 - `text/template` (instead of `html/template`) rendering to HTML → XSS.
 - `json.Unmarshal` into a struct with server-owned fields that the client can set
   → mass assignment.
+
+## NestJS (Node.js / TypeScript)
+
+**Where routes live**
+- `@Controller('prefix')` classes decorated with `@Get(...)`, `@Post(...)`, `@Patch(...)`, `@Delete(...)` across `*.controller.ts` files under `src/`.
+- Controllers are registered in `@Module({ controllers: [...] })` arrays (`*.module.ts`).
+- Global route prefixes (`app.setGlobalPrefix('api')`) and global pipes/guards in `main.ts` or `app.module.ts`.
+- Interactive route discovery: if `@nestjs/swagger` is configured, inspect `http://localhost:3000/api` or `/docs`.
+
+**Where auth should be**
+- `@UseGuards(AuthGuard('jwt'))` or custom authorization guards (`@UseGuards(RolesGuard)`) placed at the controller class or method level, or wired globally via `APP_GUARD`.
+- Routes without an explicit guard (or where `@Public()` / `@SetMetadata('isPublic', true)` bypasses global guards) are public.
+- In handlers, extract identity via `@Req() req` or custom decorators (`@CurrentUser()`). Authorization / IDOR defense must be scoped in the service/query layer (e.g. `where: { id, userId }` in TypeORM/Prisma), not merely verifying that the caller holds any valid JWT.
+
+**Run it**
+- `npm run start:dev` (default `http://localhost:3000`).
+
+**Probe first**
+- Methods with an id param (`@Param('id')`) calling `service.update(id, dto)` or `service.remove(id)` without validating ownership against `user.id` → IDOR.
+- Request DTOs without `new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })` registered globally: client can pass extra fields (`role`, `isAdmin`, `isVerified`) directly into TypeORM/Prisma `.save()` or `.update()` → mass assignment.
+- Raw database queries: TypeORM `repository.query("... " + input)` or `createQueryBuilder().where("... " + input)`, Prisma `$queryRawUnsafe(...)` → SQLi.
+- Calling endpoints without `Authorization: Bearer <token>` or tampering JWT payload claims → missing / broken auth.
+- Bypassing built-in sanitization with raw Express `@Res() res` / `@Next() next` → reflected XSS or header injection.
+
+## ASP.NET Core (C# / .NET)
+
+**Where routes live**
+- Controller-based APIs: `[ApiController]` and `[Route("[controller]")]` classes in `Controllers/*Controller.cs`, with `[HttpGet]`, `[HttpPost("{id}")]`, etc.
+- Minimal APIs: `app.MapGet(...)`, `app.MapPost(...)`, and route groups (`app.MapGroup("/api")`) in `Program.cs`.
+- Route discovery: Swagger/OpenAPI UI at `http://localhost:5000/swagger` or `/openapi/v1.json` when `app.UseSwagger()` is enabled.
+
+**Where auth should be**
+- `[Authorize]` attribute on the controller class or action method, or `.RequireAuthorization()` chained onto Minimal API route endpoints.
+- Fallback/default policy in `Program.cs` (`options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()`). Endpoints decorated with `[AllowAnonymous]` bypass all authorization checks.
+- Ownership / IDOR: EF Core `_context.Items.FindAsync(id)` loads by primary key alone without tenant/owner filtering. Always query with ownership predicate: `_context.Items.Where(x => x.Id == id && x.UserId == currentUserId).FirstOrDefaultAsync()`.
+
+**Run it**
+- `dotnet run` or `dotnet watch` (default `http://localhost:5000` / `https://localhost:5001`). Port configuration in `Properties/launchSettings.json` or `ASPNETCORE_URLS`.
+
+**Probe first**
+- Endpoints taking `{id}` route parameters without user scoping on the EF Core query → IDOR; endpoints missing `[Authorize]` or carrying `[AllowAnonymous]` → missing auth.
+- Direct entity binding: binding request payload directly to an EF Core entity model (`public async Task<IActionResult> Post(User user)`) instead of an input DTO / record → mass assignment / overposting (can overwrite `IsAdmin`, `RoleId`, etc.).
+- String-interpolated raw SQL: `_context.Database.ExecuteSqlRaw($"SELECT ... {input}")` or `_context.FromSqlRaw($"... {input}")` → SQLi (use `ExecuteSqlInterpolated` or parameterized queries).
+- Razor views (`.cshtml`) using `@Html.Raw(userInput)` instead of standard `@userInput` auto-encoding → XSS.
+- Unhandled exceptions returning detailed stack traces or database connection strings if `app.UseDeveloperExceptionPage()` is active in production/staging environments → info leak.
 
 ## Any stack — the constants
 

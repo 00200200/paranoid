@@ -11,10 +11,10 @@ contributing is low-friction.
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
   XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
   unverified webhooks, insecure deserialization, SSRF via DNS-rebinding).
-- **A `/hack-me` framework guide.** We cover ten stacks in
+- **A `/hack-me` framework guide.** We cover twelve stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
-  Go). Request another via the framework-guide issue template.
+  Go, NestJS, ASP.NET Core). Request another via the framework-guide issue template.
 - **An independent-app proof.** Run `/hack-me` against a public
   intentionally-vulnerable app on localhost and add a receipts report under
   [`examples/`](examples) (see [`examples/vampi`](examples/vampi) for the format).
@@ -25,9 +25,18 @@ contributing is low-friction.
 Each of these is a self-contained PR. Comment on the matching issue (or open one
 from the templates) before starting.
 
-1. **Framework guide: Laravel/Phoenix are done** — request another stack via the
-   framework-guide issue template if yours isn't covered.
-2. **Independent proof: a second app.** A localhost `/hack-me` run against another
+1. **Framework guide: Laravel, Phoenix, NestJS and ASP.NET Core are done** —
+   request another stack via the framework-guide issue template if yours isn't
+   covered.
+2. **Benchmark: a matched-model run across all 22 classes.** The numbers in
+   [`benchmark/README.md`](benchmark/README.md) only cover three classes; the
+   rest are harness-verified but have never been scored against a model. Generate
+   `solutions/<model>_baseline/` and `solutions/<model>_paranoid/` (same model,
+   same settings, skill in context for one and not the other) and score them.
+   *Done when* both conditions cover all 22 tasks, the raw solutions are
+   committed, and the report states the model and date. A negative result is a
+   perfectly good result here — see the honesty rules.
+3. **Independent proof: a second app.** A localhost `/hack-me` run against another
    public vulnerable app (e.g. a small DVWA-style target), with a receipts
    `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
    request/response and a re-verified fix.
@@ -35,7 +44,7 @@ from the templates) before starting.
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
 insecure-deserialization, and SSRF via DNS-rebinding task classes; the Flask,
-Spring Boot, Laravel, and Phoenix guides; and the harness
+Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; and the harness
 `--json` flag.
 
 These map to the issue templates in
