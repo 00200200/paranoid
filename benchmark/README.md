@@ -30,18 +30,57 @@ Two numbers per condition:
 - **Score**: `harness/run.py` runs the functional check, then the exploit check,
   for each solution and reports per-condition rates.
 
+### Blinding (and a correction to the earlier numbers)
+
+The task ids name their own vulnerability — `sqli_login`, `xxe_item_parse`,
+`insecure_deserialization`. Telling a model to write `sqli_login.py` *is* a
+security hint, arguably the strongest one available, because it names the exact
+weakness to defend against. The earlier three-class numbers were generated that
+way, and they were written into `.../paranoid/benchmark/solutions/<condition>/`,
+so the control arm could also infer it was the control arm of a security
+benchmark. Both leaks push the baseline toward looking secure — that is, toward
+the null result this page already reports. That is the worst direction for a
+bias to run, so the 22-class run was done twice:
+
+- **unblinded** — specs as-is, vulnerability-named files, written inside the repo
+- **blinded** — the same specs presented as `task_01.py` ... `task_22.py`, spec
+  titles stripped, generated outside the repo, with no mention of a benchmark,
+  a baseline, or security anywhere in the instructions
+
+Both landed on +0pp. **Quote the blinded row.**
+
+Residual limitation, stated rather than hidden: 22 security-shaped specs
+presented together still hint at the theme. The blinded baseline volunteered that
+"several specs were written in a way that invites an unsafe reading" — it inferred
+the subject from content alone. Removing that entirely would need one task per
+isolated context. So the baseline here is an *upper bound* on how secure an
+unprompted model looks, and the true delta could only be smaller, not larger.
+
 ## Result
 
 Matched-model runs, skill vs no-skill:
 
 | Model | Task set | exploit rate (baseline) | exploit rate (paranoid) | delta |
 |---|---|:--:|:--:|:--:|
+| Opus | **all 22 classes, blinded** (2026-09-21) | **0%** | **0%** | **+0pp** |
+| Opus | all 22 classes, unblinded (2026-09-21) | 0% | 0% | +0pp |
 | Fable 5.1 | 3 isolated fns, leading specs | 0% | 0% | +0pp |
 | Opus | 3 isolated fns, leading specs | 0% | 0% | +0pp |
 | Opus | 3 isolated fns, neutral/tempting specs | 0% | 0% | +0pp |
 
 **A capable model already writes the secure version of an isolated function
-unprompted.** The skill has no headroom to add value at this granularity.
+unprompted.** The skill has no headroom to add value at this granularity — now
+measured across all 22 classes, not three, and with the vulnerability names
+hidden from both arms (see *Blinding* below).
+
+**It does cost correctness.** In both 22-class runs the skill condition scored
+21/22 functional against the baseline's 22/22, failing the *same* task each time:
+`leaked_secrets_client_config`, where it over-filtered until the legitimate public
+settings were stripped along with the secrets. A safety win that breaks the
+feature is not a win, and it is the trade-off BaxBench reports too.
+
+Raw solutions for every condition are committed under `solutions/` so anyone can
+re-score them.
 
 This is not a broken harness. Against deliberately-insecure vs secure reference
 solutions (`solutions/selftest_insecure`, `solutions/selftest_secure`) it reports
@@ -61,10 +100,8 @@ Twenty-two classes have a neutral spec + functional + exploit check today:
 `permissive_cors_origin`, `weak_password_storage`, `redos_username_validate`,
 `webhook_event_apply`, `insecure_deserialization`, `ssrf_dns_rebinding`. All
 twenty-two are covered by the insecure/secure self-test
-above (100% / 0%). The matched-model numbers reported here predate the classes
-added after SQLi/IDOR/mass-assignment; those newer classes are harness-verified and awaiting
-a model-condition run (honesty rule: no model number appears until the harness
-produced it).
+above (100% / 0%). As of 2026-09-21 all twenty-two have also been scored against
+a model in both conditions — see the blinded run in *Result*.
 
 Machine-readable output: add `--json` to any `run.py` invocation to get a single
 JSON summary (per-condition rates + delta) instead of the human tables — handy for

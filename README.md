@@ -110,15 +110,22 @@ The result was a clean negative:
 
 | Model | Tasks | Exploit rate **without** skill | **with** skill | Effect |
 |---|---|:--:|:--:|:--:|
-| Fable 5.1 | isolated functions (easy) | 0% | 0% | none |
-| Opus | isolated functions (easy) | 0% | 0% | none |
-| Opus | isolated functions (neutral/tempting) | 0% | 0% | none |
+| Opus | **all 22 classes, blinded** | **0%** | **0%** | **none** |
+| Opus | 3 isolated functions | 0% | 0% | none |
+| Fable 5.1 | 3 isolated functions | 0% | 0% | none |
 
 On an isolated function a capable model already writes the secure version
 unprompted — ownership in the `WHERE` clause, parameterized queries, field
 allow-lists. **Advice adds nothing there.** (The harness isn't rigged: it flags
 deliberately-insecure reference code at 100% and secure code at 0%, and CI
 asserts that on every push.)
+
+*Blinded* matters here: the task ids name their own vulnerability, so asking a
+model for `sqli_login.py` is itself a security hint. The 22-class run was redone
+with the specs renamed `task_01…task_22`, generated outside the repo, with no
+mention of a benchmark — and the result held. The skill did, however, cost a
+functional test the baseline passed. [Full method, caveats and raw
+solutions.](benchmark)
 
 Real vulnerabilities don't live in one tidy function. They live in the **wiring**
 of a whole running app: auth on one route but not the next, a request body that
@@ -144,9 +151,11 @@ Load it while building; run `/hack-me` to check whether it held.
 
 A reproducible harness for *"does a security skill actually reduce
 vulnerabilities?"* — 22 vulnerability classes, each with a neutral spec, a
-functional check and a real exploit check. CI asserts on every push that the
-deliberately-insecure references still score 100% and the secure ones 0%, so the
-benchmark can't silently rot. Details and how to re-run it: [`benchmark/`](benchmark).
+functional check and a real exploit check. All 22 have been scored against a
+model in both conditions, blinded; the raw solutions are committed so anyone can
+re-score them. CI asserts on every push that the deliberately-insecure references
+still score 100% and the secure ones 0%, so the benchmark can't silently rot.
+Details, caveats and how to re-run it: [`benchmark/`](benchmark).
 
 ## Scope & ethics
 
