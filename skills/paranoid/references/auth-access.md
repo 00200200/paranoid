@@ -99,3 +99,6 @@ that fails open is a breach you can't.
   algorithm-confusion). Don't store them in `localStorage` if a cookie will do.
 - On logout / privilege change, invalidate server-side; a stateless JWT you can't
   revoke is a liability for sensitive apps.
+- Password hashes: slow + salted (`bcrypt` / `argon2id` / `scrypt` / PBKDF2 with
+  a per-row salt). Unsalted `md5`/`sha1`/`sha256` of the password is still weak —
+  rainbow-tableable — even though it is not plaintext.
