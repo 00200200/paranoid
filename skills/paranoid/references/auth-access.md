@@ -95,8 +95,9 @@ that fails open is a breach you can't.
 ## Sessions & tokens (quick hits)
 
 - Session cookies: `HttpOnly`, `Secure`, `SameSite=Lax` (or `Strict`).
-- JWTs: verify signature **and** `exp`; pin the algorithm (reject `alg: none` and
-  algorithm-confusion). Don't store them in `localStorage` if a cookie will do.
+- JWTs: verify signature **and** `exp`; pin the algorithm (reject `alg: none` /
+  `None` / `NONE` and algorithm-confusion — match case-insensitively or allow-list
+  the one alg you use). Don't store them in `localStorage` if a cookie will do.
 - On logout / privilege change, invalidate server-side; a stateless JWT you can't
   revoke is a liability for sensitive apps.
 - Password hashes: slow + salted (`bcrypt` / `argon2id` / `scrypt` / PBKDF2 with

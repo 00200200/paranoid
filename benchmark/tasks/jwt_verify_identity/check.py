@@ -41,8 +41,12 @@ def secure(fn):
     h, _p, s = valid.split(".")
     forged_payload = _b64(json.dumps({"sub": "admin"}, separators=(",", ":")).encode())
 
+    # Libraries and half-fixes often match only the exact lowercase "none";
+    # "None" / "NONE" with an empty signature is the same bypass.
     forgeries = {
         "alg:none unsigned admin token": _make({"alg": "none", "typ": "JWT"}, {"sub": "admin"}, None),
+        "alg:None unsigned admin token": _make({"alg": "None", "typ": "JWT"}, {"sub": "admin"}, None),
+        "alg:NONE unsigned admin token": _make({"alg": "NONE", "typ": "JWT"}, {"sub": "admin"}, None),
         "admin token signed with the wrong key": _make(
             {"alg": "HS256", "typ": "JWT"}, {"sub": "admin"}, "attacker-guess"
         ),
