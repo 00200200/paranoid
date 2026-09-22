@@ -24,7 +24,7 @@ Two numbers per condition:
   injection, open redirect, JWT auth verification, leaked secrets, CSRF,
   template/format-string injection, XXE, unrestricted upload, permissive CORS,
   weak password storage, unverified webhooks, ReDoS, insecure deserialization,
-  SSRF via DNS-rebinding).
+  SSRF via DNS-rebinding, route-wiring IDOR).
 - **Conditions**: identical base model; `baseline` = no skill, `paranoid` = skill
   in context. The generated solutions live in `solutions/<condition>/`.
 - **Score**: `harness/run.py` runs the functional check, then the exploit check,

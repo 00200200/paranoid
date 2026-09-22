@@ -6,11 +6,12 @@ contributing is low-friction.
 
 ## Good first contributions
 
-- **A new benchmark task class.** The harness covers 22 classes today (IDOR,
+- **A new benchmark task class.** The harness covers 23 classes today (IDOR,
   missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
   XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
-  unverified webhooks, insecure deserialization, SSRF via DNS-rebinding).
+  unverified webhooks, insecure deserialization, SSRF via DNS-rebinding,
+  route-wiring IDOR).
 - **A `/hack-me` framework guide.** We cover twelve stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
@@ -28,17 +29,7 @@ from the templates) before starting.
 1. **Framework guide: Laravel, Phoenix, NestJS and ASP.NET Core are done** —
    request another stack via the framework-guide issue template if yours isn't
    covered.
-2. **Benchmark: a multi-file app task.** Every task today is one isolated
-   function, and that's exactly the regime where the measured answer is +0pp — a
-   capable model already writes the secure version unprompted (see
-   [`benchmark/README.md`](benchmark/README.md), all 22 classes, blinded). The
-   open question is the regime where real bugs live: a small multi-route app
-   where the vulnerability is in the *wiring* — auth present on one route and
-   missing on the next — rather than in any single function. *Done when* the task
-   ships a neutral spec, a functional check, an exploit check, and insecure/secure
-   references that the self-test scores 100%/0%. A second negative result is a
-   perfectly good result here — see the honesty rules.
-3. **Independent proof: a target that doesn't advertise its bugs.** Two apps are
+2. **Independent proof: a target that doesn't advertise its bugs.** Two apps are
    done — [`examples/vampi`](examples/vampi) and [`examples/dvwa`](examples/dvwa),
    6 findings each. The gap: DVWA lists its own vulnerability categories in its
    navigation, so it tests *prove → patch → re-verify*, not *find*. The valuable
@@ -49,10 +40,10 @@ from the templates) before starting.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
-insecure-deserialization, and SSRF via DNS-rebinding task classes; the Flask,
-Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; the harness
-`--json` flag; the all-22-class blinded benchmark run; and the DVWA
-independent-app proof.
+insecure-deserialization, SSRF via DNS-rebinding, and route-wiring IDOR
+task classes; the Flask, Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core
+guides; the harness `--json` flag; the all-22-class blinded benchmark run;
+and the DVWA independent-app proof.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
