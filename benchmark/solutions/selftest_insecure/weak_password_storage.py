@@ -1,4 +1,8 @@
-# Deliberately vulnerable reference (weak storage): persists the plaintext
-# password, exactly like the seed data /hack-me dumped out of VAmPI.
+# Deliberately vulnerable reference (weak storage): unsalted MD5 of the
+# password. Still one round-trip from a rainbow table; the login check that
+# only rejects plaintext will score this as "safe".
+import hashlib
+
+
 def store_password(password):
-    return password
+    return hashlib.md5(password.encode("utf-8")).hexdigest()
