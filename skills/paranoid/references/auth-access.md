@@ -34,6 +34,9 @@ Rules of thumb:
 - Do the check server-side, every time — never rely on the client hiding a button.
 - IDs that are enumerable (`1, 2, 3…`) make IDOR trivial; UUIDs help but are
   **not** an access control — still check ownership.
+- Multi-route APIs: don't scope `GET /resource/:id` and forget mutations.
+  `PATCH`, `PUT`, and `DELETE` must include the owner check in the mutation
+  query (`where: { id, ownerId }`), not just rely on router-level authentication.
 
 ## Function-level authorization
 

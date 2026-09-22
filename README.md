@@ -161,7 +161,7 @@ Load it while building; run `/hack-me` to check whether it held.
 ## The benchmark
 
 A reproducible harness for *"does a security skill actually reduce
-vulnerabilities?"* — 22 vulnerability classes, each with a neutral spec, a
+vulnerabilities?"* — 23 vulnerability classes, each with a neutral spec, a
 functional check and a real exploit check. All 22 have been scored against a
 model in both conditions, blinded; the raw solutions are committed so anyone can
 re-score them. CI asserts on every push that the deliberately-insecure references
@@ -180,7 +180,7 @@ or produce live malware, and it will decline to. See [SECURITY.md](SECURITY.md).
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
-- [x] 22 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization, SSRF via DNS-rebinding)
+- [x] 23 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization, SSRF via DNS-rebinding, route-wiring IDOR)
 - [x] `/hack-me` framework guides — 10 stacks
 - [x] A second independent-app proof — [DVWA](examples/dvwa): 6 real bugs found, fixed & re-verified on a PHP/MariaDB stack
 - [ ] A third proof on a target that publishes no bug list, so the *find* step has to earn it
