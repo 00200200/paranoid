@@ -1,0 +1,20 @@
+{
+  "name": "paranoid",
+  "owner": {
+    "name": "kulchankas",
+    "url": "https://github.com/kulchankas"
+  },
+  "metadata": {
+    "description": "The paranoid security skill and its /hack-me pentest loop.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "paranoid",
+      "source": "./",
+      "description": "Pentests the app you're building: /hack-me attacks your own running app, proves each finding with a real request, patches the root cause, and re-verifies by replaying the exploit.",
+      "category": "security",
+      "keywords": ["security", "pentest", "appsec", "dast", "secure-coding"]
+    }
+  ]
+}

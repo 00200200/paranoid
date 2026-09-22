@@ -28,12 +28,23 @@ until that exact exploit stops working.
 
 ## Quickstart
 
+**Claude Code** — one install, gets you the skill *and* the `/hack-me` command:
+
+```bash
+/plugin marketplace add kulchankas/paranoid
+/plugin install paranoid@paranoid
+```
+
+**Codex, Cursor, or any agent that reads skills:**
+
 ```bash
 npx skills add kulchankas/paranoid/skills/paranoid
 ```
 
-Copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
-directory (e.g. `.claude/commands/`), start your app, and point the agent at it:
+then copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
+directory (e.g. `.claude/commands/`).
+
+Start your app and point the agent at it:
 
 ```bash
 python3 my_app.py     # your app, running locally

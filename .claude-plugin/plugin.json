@@ -1,0 +1,20 @@
+{
+  "name": "paranoid",
+  "description": "Pentests the app you're building: /hack-me attacks your own running app, proves each finding with a real request, patches the root cause, and re-verifies by replaying the exploit.",
+  "version": "0.1.0",
+  "author": {
+    "name": "kulchankas",
+    "url": "https://github.com/kulchankas"
+  },
+  "homepage": "https://github.com/kulchankas/paranoid",
+  "repository": "https://github.com/kulchankas/paranoid",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "pentest",
+    "appsec",
+    "dast",
+    "vulnerability-detection",
+    "secure-coding"
+  ]
+}
