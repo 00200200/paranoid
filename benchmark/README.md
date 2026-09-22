@@ -79,6 +79,15 @@ hidden from both arms (see *Blinding* below).
 settings were stripped along with the secrets. A safety win that breaks the
 feature is not a win, and it is the trade-off BaxBench reports too.
 
+Specifically, it dropped `STRIPE_PUBLISHABLE_KEY` — a credential Stripe designs
+to ship to the browser — because the name looks like a secret. The skill has
+since been given the missing counterweight: [which credentials are meant to
+ship](../skills/paranoid/references/secrets-config.md) and the rule that you
+decide by what a credential *is*, not by whether its name contains `KEY`.
+**Whether that actually closes the gap is unmeasured** — it needs a re-run, and
+the 21/22 above stands until someone produces a new number
+([#17](https://github.com/kulchankas/paranoid/issues/17)).
+
 Raw solutions for every condition are committed under `solutions/` so anyone can
 re-score them.
 

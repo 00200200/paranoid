@@ -35,6 +35,38 @@ constantly. Only publishable/anon keys belong under these prefixes. When you add
 one, ask: "is it fine for this to be in HTML anyone can view?" If not, it's a
 server variable and the code that uses it must run on the server.
 
+### The other direction: don't strip the keys that are meant to ship
+
+This is the failure mode of being *too* careful, and it is measured, not
+hypothetical: in this project's own benchmark, the one functional test the
+paranoid condition failed (and the baseline passed) was a client-config task
+where it dropped `STRIPE_PUBLISHABLE_KEY` along with the real secrets. The
+guidance above, followed without this counterweight, filters until the feature
+breaks. A security fix that breaks payments is not a fix.
+
+Some credentials are **designed** to be public and are load-bearing in the
+browser. Removing them doesn't harden anything — it just breaks checkout, auth,
+maps, or analytics:
+
+| Meant to ship | Never ships |
+|---|---|
+| Stripe **publishable** key (`pk_live_…`, `pk_test_…`) | Stripe secret key (`sk_live_…`) |
+| Supabase **anon** key | Supabase `service_role` key |
+| Firebase web config, including `apiKey` | Firebase Admin SDK service-account JSON |
+| Sentry/PostHog **public DSN** or project key | Sentry auth token |
+| Google Maps **browser** key (restrict by referrer) | Google service-account key |
+| Algolia **search-only** key | Algolia admin key |
+
+The rule: **decide by what the credential is, not by what its name looks like.**
+`SECRET`, `KEY` and `TOKEN` in a variable name are a prompt to check, not a
+verdict — `STRIPE_PUBLISHABLE_KEY` and `SESSION_SECRET` both contain one of
+those words and belong on opposite sides of the boundary. If you can't tell what
+a credential is, say so and ask, rather than silently dropping it.
+
+Firebase's `apiKey` is the classic confusion: it is an identifier, not an
+authenticator, and Firebase documents it as public. Access is controlled by
+security rules, so removing the key breaks the app without securing anything.
+
 ## The client enforces nothing
 
 Anything the client sends can be forged with curl. So:
