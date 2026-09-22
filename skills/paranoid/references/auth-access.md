@@ -97,7 +97,9 @@ that fails open is a breach you can't.
 
 ## Sessions & tokens (quick hits)
 
-- Session cookies: `HttpOnly`, `Secure`, `SameSite=Lax` (or `Strict`).
+- Session cookies: `HttpOnly`, `Secure`, `SameSite=Lax` (or `Strict`). Missing
+  any one of those is a finding — bare `name=value` is readable by XSS, rides
+  cleartext, and is sendable cross-site.
 - JWTs: verify signature **and** `exp`; pin the algorithm (reject `alg: none` /
   `None` / `NONE` and algorithm-confusion — match case-insensitively or allow-list
   the one alg you use). Don't store them in `localStorage` if a cookie will do.

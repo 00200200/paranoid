@@ -24,7 +24,7 @@ Two numbers per condition:
   injection, open redirect, JWT auth verification, leaked secrets, CSRF,
   template/format-string injection, XXE, unrestricted upload, permissive CORS,
   weak password storage, unverified webhooks, ReDoS, insecure deserialization,
-  SSRF via DNS-rebinding, route-wiring IDOR).
+  SSRF via DNS-rebinding, route-wiring IDOR, session cookie flags).
 - **Conditions**: identical base model; `baseline` = no skill, `paranoid` = skill
   in context. The generated solutions live in `solutions/<condition>/`.
 - **Score**: `harness/run.py` runs the functional check, then the exploit check,
@@ -100,17 +100,19 @@ build.
 
 ## Task classes
 
-Twenty-two classes have a neutral spec + functional + exploit check today:
+Twenty-three classes have a neutral spec + functional + exploit check today:
 `idor_invoices`, `idor_session_only`, `missing_auth_admin`, `sqli_login`,
 `mass_assignment_update`, `path_traversal_note`, `ssrf_url_preview`,
 `xss_comment_render`, `command_injection_ping`, `open_redirect_login`,
 `jwt_verify_identity`, `leaked_secrets_client_config`, `csrf_state_change`,
 `template_injection_notice`, `xxe_item_parse`, `unrestricted_file_upload`,
 `permissive_cors_origin`, `weak_password_storage`, `redos_username_validate`,
-`webhook_event_apply`, `insecure_deserialization`, `ssrf_dns_rebinding`. All
-twenty-two are covered by the insecure/secure self-test
-above (100% / 0%). As of 2026-09-21 all twenty-two have also been scored against
-a model in both conditions — see the blinded run in *Result*.
+`webhook_event_apply`, `insecure_deserialization`, `ssrf_dns_rebinding`,
+`session_cookie_flags`. All twenty-three are covered by the insecure/secure
+self-test above (100% / 0%). As of 2026-09-21 twenty-two of them have also been
+scored against a model in both conditions — see the blinded run in *Result*;
+`session_cookie_flags` is harness-verified and awaiting a model-condition run
+(honesty rule: no model number until the harness produces one).
 
 Machine-readable output: add `--json` to any `run.py` invocation to get a single
 JSON summary (per-condition rates + delta) instead of the human tables — handy for

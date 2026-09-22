@@ -11,7 +11,7 @@ contributing is low-friction.
   injection, open redirect, JWT auth, leaked secrets, CSRF, template injection,
   XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS,
   unverified webhooks, insecure deserialization, SSRF via DNS-rebinding,
-  route-wiring IDOR).
+  route-wiring IDOR, session cookie flags).
 - **A `/hack-me` framework guide.** We cover twelve stacks in
   [`skills/paranoid/references/frameworks.md`](skills/paranoid/references/frameworks.md)
   (Next.js, FastAPI, Express, Django, Rails, Flask, Spring Boot, Laravel, Phoenix,
@@ -40,7 +40,7 @@ from the templates) before starting.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
-insecure-deserialization, SSRF via DNS-rebinding, and route-wiring IDOR
+insecure-deserialization, SSRF via DNS-rebinding, route-wiring IDOR, and session-cookie-flags
 task classes; the Flask, Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core
 guides; the harness `--json` flag; the all-22-class blinded benchmark run;
 and the DVWA independent-app proof.
