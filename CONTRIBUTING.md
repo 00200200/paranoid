@@ -28,22 +28,31 @@ from the templates) before starting.
 1. **Framework guide: Laravel, Phoenix, NestJS and ASP.NET Core are done** —
    request another stack via the framework-guide issue template if yours isn't
    covered.
-2. **Benchmark: a matched-model run across all 22 classes.** The numbers in
-   [`benchmark/README.md`](benchmark/README.md) only cover three classes; the
-   rest are harness-verified but have never been scored against a model. Generate
-   `solutions/<model>_baseline/` and `solutions/<model>_paranoid/` (same model,
-   same settings, skill in context for one and not the other) and score them.
-   *Done when* both conditions cover all 22 tasks, the raw solutions are
-   committed, and the report states the model and date. A negative result is a
+2. **Benchmark: a multi-file app task.** Every task today is one isolated
+   function, and that's exactly the regime where the measured answer is +0pp — a
+   capable model already writes the secure version unprompted (see
+   [`benchmark/README.md`](benchmark/README.md), all 22 classes, blinded). The
+   open question is the regime where real bugs live: a small multi-route app
+   where the vulnerability is in the *wiring* — auth present on one route and
+   missing on the next — rather than in any single function. *Done when* the task
+   ships a neutral spec, a functional check, an exploit check, and insecure/secure
+   references that the self-test scores 100%/0%. A second negative result is a
    perfectly good result here — see the honesty rules.
-3. **Independent proof: a second app — done** ([`examples/dvwa`](examples/dvwa),
-   6 findings). A third would still be welcome; same format.
+3. **Independent proof: a target that doesn't advertise its bugs.** Two apps are
+   done — [`examples/vampi`](examples/vampi) and [`examples/dvwa`](examples/dvwa),
+   6 findings each. The gap: DVWA lists its own vulnerability categories in its
+   navigation, so it tests *prove → patch → re-verify*, not *find*. The valuable
+   third proof is a vulnerable app that publishes **no** bug list, where the
+   discovery step has to earn it. *Done when* every finding shows a real
+   request/response and a re-verified fix, and the report states what was in scope
+   and what wasn't.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
 insecure-deserialization, and SSRF via DNS-rebinding task classes; the Flask,
 Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; the harness
-`--json` flag; and the DVWA independent-app proof.
+`--json` flag; the all-22-class blinded benchmark run; and the DVWA
+independent-app proof.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`

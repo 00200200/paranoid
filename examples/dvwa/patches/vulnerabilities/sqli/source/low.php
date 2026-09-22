@@ -30,10 +30,12 @@ if( isset( $_REQUEST[ 'Submit' ] ) ) {
 			#$sqlite_db_connection = new SQLite3($_DVWA['SQLITE_DB']);
 			#$sqlite_db_connection->enableExceptions(true);
 
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
-			#print $query;
+			// Parameterized here too — the MySQL branch above is not the only
+			// place $id reaches a query in this file.
 			try {
-				$results = $sqlite_db_connection->query($query);
+				$stmt = $sqlite_db_connection->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?;");
+				$stmt->bindValue(1, $id, SQLITE3_TEXT);
+				$results = $stmt->execute();
 			} catch (Exception $e) {
 				echo 'Caught exception: ' . $e->getMessage();
 				exit();

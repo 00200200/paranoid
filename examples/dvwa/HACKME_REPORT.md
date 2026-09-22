@@ -19,7 +19,8 @@ DVWA is a third-party **web app** with a PHP/MariaDB stack the other two
 examples don't touch, and it's the project's second independent-app proof
 (tracked on the [roadmap](../../README.md#roadmap)).
 
-**Result: 6 vulnerabilities proven; all closed and re-verified.**
+**Result: 6 vulnerabilities proven; all closed and re-verified.** (Scope and
+limits of that claim are spelled out [below](#scope-and-what-this-proof-does-not-claim).)
 
 ---
 
@@ -102,6 +103,9 @@ password is recovered.
 + $result = mysqli_stmt_get_result($stmt);
 ```
 Parameterized query — `$id` can never break out of the string literal.
+(The same file has a second copy of this query for the SQLite backend; it was
+missed during the run and parameterized afterwards — see
+[Post-merge review finding](#post-merge-review-finding).)
 
 ### Re-verify
 ```
@@ -286,6 +290,41 @@ $ curl ... -F "uploaded=@tiny.png;type=image/png" ...
 ```
 
 ---
+
+## Scope, and what this proof does *not* claim
+
+Stated plainly, because the [VAmPI proof](../vampi/HACKME_REPORT.md) is a
+stronger claim than this one and the two shouldn't be read as equivalent:
+
+- **This is not blind discovery.** DVWA's own navigation menu lists its
+  vulnerability categories by name, and its docs describe each one. An agent
+  pointed at it can read the menu. VAmPI is the proof that the *find* step works
+  on an app that doesn't announce its bugs; DVWA is the proof that
+  **prove → patch → re-verify** works on a different stack — server-rendered
+  PHP/MariaDB with forms, cookies and `Location` headers instead of a JSON API.
+  Both halves of the loop matter; only one of them is being demonstrated here.
+- **Six of DVWA's nineteen modules.** Covered: `exec`, `sqli`, `xss_r`,
+  `open_redirect`, `csrf`, `upload`. Not touched in this run: `api`,
+  `authbypass`, `bac`, `brute`, `captcha`, `cryptography`, `csp`, `fi`,
+  `javascript`, `sqli_blind`, `weak_id`, `xss_d`, `xss_s`. "6 found" means six
+  proven and closed, not a clean bill of health for the app.
+- **Low security level only.** DVWA's Medium/High levels are deliberately
+  *partial* fixes designed to be bypassed; they're a different exercise.
+- **One configuration.** MySQL/MariaDB, Apache, the stock `compose.yml`.
+
+### Post-merge review finding
+
+Reviewing this report after merge turned up a miss the run itself didn't catch:
+`vulnerabilities/sqli/source/low.php` contains **two** copies of the same
+injection — one per database backend — and only the `case MYSQL:` branch was
+parameterized. The `case SQLITE:` branch still concatenated `$id`, so anyone
+running DVWA with `$_DVWA['SQLI_DB'] = SQLITE` would have applied the patch and
+stayed injectable. Now fixed in `patches/` with a bound `SQLite3` statement.
+
+It's recorded here rather than quietly corrected because it's the failure mode
+this project keeps pointing at: a fix verified against *the request you sent*
+can still leave the same bug live on a path you didn't exercise. Re-verification
+proves the exploit is dead, not that the class is gone.
 
 ## Summary
 
