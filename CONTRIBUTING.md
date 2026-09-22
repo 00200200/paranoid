@@ -36,16 +36,14 @@ from the templates) before starting.
    *Done when* both conditions cover all 22 tasks, the raw solutions are
    committed, and the report states the model and date. A negative result is a
    perfectly good result here — see the honesty rules.
-3. **Independent proof: a second app.** A localhost `/hack-me` run against another
-   public vulnerable app (e.g. a small DVWA-style target), with a receipts
-   `HACKME_REPORT.md` under `examples/`. *Done when* every finding shows a real
-   request/response and a re-verified fix.
+3. **Independent proof: a second app — done** ([`examples/dvwa`](examples/dvwa),
+   6 findings). A third would still be welcome; same format.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
 insecure-deserialization, and SSRF via DNS-rebinding task classes; the Flask,
-Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; and the harness
-`--json` flag.
+Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core guides; the harness
+`--json` flag; and the DVWA independent-app proof.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
